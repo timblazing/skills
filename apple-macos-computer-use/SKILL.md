@@ -8,8 +8,7 @@ description: |
 version: 1.0.0
 platforms: [macos]
 metadata:
-  hermes:
-    tags: [computer-use, macos, desktop, automation, gui]
+  skill:    tags: [computer-use, macos, desktop, automation, gui]
     category: desktop
     related_skills: [browser]
 ---
@@ -21,9 +20,9 @@ Your actions do NOT move the user's cursor, steal keyboard focus, or switch
 Spaces. The user can keep typing in their editor while you click around in
 Safari in another Space. This is the opposite of pyautogui-style automation.
 
-Everything here works with any tool-capable model — Claude, GPT, Gemini, or
-an open model running through a local OpenAI-compatible endpoint. There is
-no Anthropic-native schema to learn.
+Everything here works with any tool-capable model — including models served
+through a local OpenAI-compatible endpoint. There is no vendor-native schema
+to learn.
 
 ## The canonical workflow
 
@@ -50,8 +49,8 @@ habit:
 computer_use(action="click", element=7)
 ```
 
-Much more reliable than pixel coordinates for every model. Claude was
-trained on both; other models are often only reliable with indices.
+Much more reliable than pixel coordinates for every model. Some models are
+trained on both; many are only reliable with indices.
 
 **Step 3 — Verify.** After any state-changing action, re-capture. You can
 save a round-trip by asking for the post-action capture inline:
@@ -176,7 +175,7 @@ your conversation context.
 
 ## Failure modes
 
-- **"cua-driver not installed"** — Run `hermes tools` and enable Computer
+- **"cua-driver not installed"** — Enable the Computer
   Use; the setup will install cua-driver via its upstream script. Requires
   macOS + Accessibility + Screen Recording permissions.
 - **Element index stale** — SOM indices come from the last `capture` call.

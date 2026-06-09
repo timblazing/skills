@@ -2,12 +2,10 @@
 name: findmy
 description: "Track Apple devices/AirTags via FindMy.app on macOS."
 version: 1.0.0
-author: Hermes Agent
-license: MIT
+author: ""license: MIT
 platforms: [macos]
 metadata:
-  hermes:
-    tags: [FindMy, AirTag, location, tracking, macOS, Apple]
+  skill:    tags: [FindMy, AirTag, location, tracking, macOS, Apple]
 ---
 
 # Find My (Apple)

@@ -1,6 +1,6 @@
 ---
 name: frontend-ui-engineering
-description: Builds production-quality UIs. Use when building or modifying user-facing interfaces. Use when creating components, implementing layouts, managing state, or when the output needs to look and feel production-quality rather than AI-generated.
+description: Builds production-quality UIs. Use when building or modifying user-facing interfaces — creating components, implementing layouts, managing state, choosing visual/aesthetic direction, applying polish and micro-interactions, or reviewing UI against Web Interface Guidelines. Use when the output needs to look and feel production-quality rather than AI-generated.
 ---
 
 # Frontend UI Engineering
@@ -294,7 +294,10 @@ function useToggleTask() {
 
 ## See Also
 
-For detailed accessibility requirements and testing tools, see `references/accessibility-checklist.md`.
+- `references/accessibility-checklist.md` — detailed accessibility requirements and testing tools.
+- `references/visual-design.md` — aesthetic direction: choosing a distinctive palette, type, and layout that don't read as templated defaults. Read this when starting a new design or reshaping an existing one.
+- `references/polish-details.md` — the detail-level principles (concentric radius, optical alignment, shadows, staggered animations, tabular numbers, hit areas) that make an interface *feel* polished, plus its review-output format. Read when polishing or reviewing UI detail work. Backed by `references/typography.md`, `references/surfaces.md`, `references/animations.md`, `references/performance.md`.
+- `references/web-interface-guidelines.md` — how to review UI code against the Web Interface Guidelines. Use for "review my UI / check accessibility / audit design" requests.
 
 ## Common Rationalizations
 
