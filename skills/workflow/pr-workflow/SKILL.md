@@ -1,6 +1,6 @@
 ---
 name: pr-workflow
-description: How to land changes in product repos (websites, apps, software): branch and PR instead of pushing to main, which tier to use (default / full-stop / full-send), how to fix bugs, when to spend Greptile credits, and how to add free CI. Use at the start of any task that changes code in a product repo (not only when committing), when fixing a bug, or when asked to set up CI or review bots. Opening the PR is part of finishing the task: do it without asking.
+description: "How to land changes in product repos (websites, apps, software): branch and PR instead of pushing to main, which tier to use (default / full-stop / full-send), how to fix bugs, when to spend Greptile credits, and how to add free CI. Use at the start of any task that changes code in a product repo (not only when committing), when fixing a bug, or when asked to set up CI or review bots. Opening the PR is part of finishing the task: do it without asking."
 ---
 
 # PR workflow
