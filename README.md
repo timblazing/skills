@@ -4,6 +4,11 @@ The agent skills I actually use, kept in one place so every machine I work on (M
 
 ## Skills
 
+Cloudflare skills are grouped under `skills/cloudflare/` in the repository to
+keep the source tree manageable. The installer links each skill by its folder
+name into the top level of both `~/.agents/skills` and `~/.claude/skills`, where
+the agents discover them.
+
 | Skill | What it does | Source |
 | --- | --- | --- |
 | [agent-browser](skills/agent-browser) | Browser automation CLI for agents | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) (Apache-2.0) |
@@ -25,7 +30,10 @@ git clone https://github.com/timblazing/skills.git ~/DEV/github/skills
 ~/DEV/github/skills/install.sh
 ```
 
-`install.sh` symlinks each skill into `~/.agents/skills/<name>`, then links `~/.claude/skills/<name>` to that. You can re-run it any time. Anything already at one of those paths gets moved to `~/.agents/backups/` rather than deleted.
+`install.sh` symlinks each skill in `skills/` (including categorized folders)
+into `~/.agents/skills/<name>`, then links `~/.claude/skills/<name>` to that.
+You can re-run it any time. Anything already at one of those paths gets moved
+to `~/.agents/backups/` rather than deleted.
 
 To leave a skill off one machine (for example `open-pencil` on a headless server), list it in `~/.config/agent-skills/skip`:
 

@@ -35,7 +35,8 @@ link() {
   echo "  linked $path"
 }
 
-for dir in "$repo"/skills/*/; do
+while IFS= read -r skill_file; do
+  dir="$(dirname "$skill_file")"
   name="$(basename "$dir")"
   if skipped "$name"; then
     for p in "$claude/$name" "$agents/$name"; do
@@ -43,9 +44,9 @@ for dir in "$repo"/skills/*/; do
     done
     continue
   fi
-  link "$repo/skills/$name" "$agents/$name" agents
+  link "$dir" "$agents/$name" agents
   link "../../.agents/skills/$name" "$claude/$name" claude
-done
+done < <(find "$repo/skills" -mindepth 2 -name SKILL.md -print | sort)
 
 # Remove links to skills that were deleted from the repo.
 for p in "$agents"/* "$claude"/*; do
