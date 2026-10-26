@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cross Review"
+  short_description: "Budgeted second opinion from the other flagship model"
+  default_prompt: "Use $cross-review to get Opus to review this change."

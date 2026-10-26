@@ -21,6 +21,25 @@ the agents discover them.
 | [ui-evidence](skills/ui-evidence) | Before/after screenshots committed to a PR | mine |
 | [vercel-react-best-practices](skills/vercel-react-best-practices) | React/Next.js performance rules | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) (MIT) |
 
+### Workflow (`skills/workflow/`)
+
+PR and review workflow, adapted from [t3dotgg/tstack](https://github.com/t3dotgg/tstack)
+(MIT, see `skills/workflow/LICENSE-tstack`; vendored at `7de017b`) for $20
+Claude and Codex plans: one cross-provider reviewer at medium effort, 2-3
+rounds, review skipped for small changes, Greptile only on big PRs.
+
+| Skill | Say | What it does | Source |
+| --- | --- | --- | --- |
+| [pr-workflow](skills/workflow/pr-workflow) | (automatic) | Branch + PR in product repos, tiers, bug-fix procedure, CI template, Greptile rules | mine |
+| [cross-review](skills/workflow/cross-review) | "cross review", "sol loop", "council" | Other flagship (Opus ↔ Sol) reviews the change in a short loop | replaces tstack `sol-loop` + `council` |
+| [full-send](skills/workflow/full-send) | "full send" | Prove, review, file, babysit, merge (personal repos) | tstack, edited |
+| [full-stop](skills/workflow/full-stop) | "full stop" | Same, but stops with the PR ready for you to merge | tstack, edited |
+| [file-pr](skills/workflow/file-pr) | "file a PR" | Short PR that leads with the problem | tstack, edited |
+| [babysit-pr](skills/workflow/babysit-pr) | "babysit" | Watch CI and review bots, fix real findings | tstack, edited |
+| [leaving-pr-comments](skills/workflow/leaving-pr-comments) | (automatic) | Attribution format for agent-posted comments | tstack |
+| [modernize](skills/workflow/modernize) | "modernize" | Rebase an old PR and decide if it should still exist | tstack |
+| [takeover](skills/workflow/takeover) | "take over" | Finish someone else's PR, branch, or thread | tstack |
+
 The `ui-*` skills run on `agent-browser`. `ui-qa`'s Helium mode (driving your real, logged-in browser) works on macOS only.
 
 ## Install

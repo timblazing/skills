@@ -53,4 +53,4 @@ for p in "$agents"/* "$claude"/*; do
   [[ -L "$p" && ! -e "$p" ]] && rm "$p" && echo "  pruned $p"
 done
 
-echo "done: $(ls "$repo/skills" | wc -l | tr -d ' ') skills in repo"
+echo "done: $(find "$repo/skills" -mindepth 2 -name SKILL.md | wc -l | tr -d ' ') skills in repo"
