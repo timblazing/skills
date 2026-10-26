@@ -53,4 +53,15 @@ for p in "$agents"/* "$claude"/*; do
   [[ -L "$p" && ! -e "$p" ]] && rm "$p" && echo "  pruned $p"
 done
 
+# Shared agent instructions and Claude Code config. ~/.claude/CLAUDE.md and
+# ~/.codex/AGENTS.md both point at ~/.agents/AGENTS.md.
+mkdir -p "$HOME/.codex" "$HOME/.claude/rules" "$HOME/.claude/agents"
+link "$repo/config/AGENTS.md" "$HOME/.agents/AGENTS.md" config
+link "../.agents/AGENTS.md" "$HOME/.claude/CLAUDE.md" config
+link "../.agents/AGENTS.md" "$HOME/.codex/AGENTS.md" config
+for f in "$repo"/config/claude/rules/*.md "$repo"/config/claude/agents/*.md; do
+  sub="$(basename "$(dirname "$f")")"
+  link "$f" "$HOME/.claude/$sub/$(basename "$f")" config
+done
+
 echo "done: $(find "$repo/skills" -mindepth 2 -name SKILL.md | wc -l | tr -d ' ') skills in repo"

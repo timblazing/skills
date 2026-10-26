@@ -51,6 +51,10 @@ git clone https://github.com/timblazing/skills.git ~/DEV/github/skills
 
 `install.sh` symlinks each skill in `skills/` (including categorized folders)
 into `~/.agents/skills/<name>`, then links `~/.claude/skills/<name>` to that.
+It also links the shared instructions in `config/`: `config/AGENTS.md` becomes
+`~/.agents/AGENTS.md` (read by Claude Code as `~/.claude/CLAUDE.md` and by Codex
+as `~/.codex/AGENTS.md`), and `config/claude/{rules,agents}` are linked into
+`~/.claude/`. Edit those files in the repo, then commit and push.
 You can re-run it any time. Anything already at one of those paths gets moved
 to `~/.agents/backups/` rather than deleted.
 
