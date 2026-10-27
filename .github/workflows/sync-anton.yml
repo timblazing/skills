@@ -1,0 +1,36 @@
+name: Sync skills to Anton
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-anton
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.ANTON_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.ANTON_SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Fast-forward Anton and relink skills
+        env:
+          ANTON_HOST: ${{ secrets.ANTON_SSH_HOST }}
+          ANTON_USER: ${{ secrets.ANTON_SSH_USER }}
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes "$ANTON_USER@$ANTON_HOST" \
+            'git -C "$HOME/DEV/github/skills" pull --ff-only origin main && "$HOME/DEV/github/skills/install.sh"'
