@@ -14,6 +14,7 @@ the agents discover them.
 | [agent-browser](skills/agent-browser) | Browser automation CLI for agents | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) (Apache-2.0) |
 | [composio-cli](skills/composio-cli) | Use the Composio CLI to work with external apps | [ComposioHQ/composio](https://github.com/ComposioHQ/composio) (MIT) |
 | [frontend-design](skills/frontend-design) | Distinctive, intentional visual design | [anthropics/skills](https://github.com/anthropics/skills) (Apache-2.0, see LICENSE.txt) |
+| [design-taste-frontend](skills/design-taste-frontend) | Research-led art direction and real-browser visual review | mine (installed globally) |
 | [design-taste-frontend](skills/design-taste-frontend) | Research-driven art direction, page composition, and browser critique | tasteskill v2 (local install) |
 | [open-pencil](skills/open-pencil) | Inspect, edit and export `.fig` files via OpenPencil | [open-pencil/open-pencil](https://github.com/open-pencil/open-pencil) (MIT) |
 | [pick-ui-library](skills/pick-ui-library) | Curated library picks for frontend tasks (manual invoke only) | [emilkowalski/skills](https://github.com/emilkowalski/skills) (MIT) |
