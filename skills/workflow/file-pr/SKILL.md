@@ -5,7 +5,9 @@ description: File a concise pull request. Use when the user asks to file, open, 
 
 # File PR
 
-Never file from the default branch: create `<type>/<short-slug>` first.
+Never file from the default branch. If you are on any other branch (such as
+a T3 worktree's `t3/...` branch), file from it as is. Only on the default
+branch, create `<type>/<short-slug>` first.
 
 Before filing, check whether a PR for this branch already exists. Review the
 diff locally against the base branch (usually `origin/main`) to make sure its

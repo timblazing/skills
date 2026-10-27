@@ -45,7 +45,8 @@ one appears.
 
 1. **Finish the change.** Complete the goal from the user's request with the
    smallest change that works. Fix the case that happened, not every case
-   that could. If you are on the default branch, create a branch first.
+   that could. If you are on the default branch, create a branch first; otherwise
+   (e.g. a T3 worktree branch) stay on the branch you have.
 2. **Prove it.** Get proof for every change you made. See "Proof".
 3. **Get feedback.** Use the `cross-review` skill. It decides whether the
    change is small enough to skip; if skipped, put the reason in the report.

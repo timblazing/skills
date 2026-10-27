@@ -20,8 +20,12 @@ In product repos, never commit or push to the default branch, even for one-line
 fixes. The only exception is a direct instruction in the current request
 ("push this straight to main"); it does not carry over to later tasks.
 
-Branch names: `<type>/<short-slug>`, e.g. `fix/cart-total-rounding`,
-`feat/dark-mode`. Commit messages follow the repo's history.
+Branches: work in T3 Code usually starts in a worktree that is already on its
+own branch (e.g. `t3/add-search`). **Use the branch you are on** unless it is
+the default branch; never create or rename a branch on top of it. Only on the
+default branch, create `<type>/<short-slug>` (e.g. `fix/cart-total-rounding`).
+A T3 worktree is not a dirty checkout to work around: commit, push, and open
+the PR from it. Commit messages follow the repo's history.
 
 ## Tiers
 
@@ -87,5 +91,7 @@ automatically, so a PR shows a green tick or a red X.
 ## Merging
 
 - Squash merge unless the repo's history shows otherwise.
-- Delete the branch after merge (`gh pr merge --squash --delete-branch`).
+- Delete the remote branch after merge (`gh pr merge --squash --delete-branch`).
+  In a T3 worktree, `gh` cannot delete the local branch while the worktree
+  uses it; that is fine, T3 removes merged worktrees itself.
 - Never `--admin` or bypass branch protection.
