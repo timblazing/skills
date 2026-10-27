@@ -4,33 +4,42 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
+  id-token: write
 
 concurrency:
-  group: sync-anton
+  group: sync-anton-skills
   cancel-in-progress: false
 
 jobs:
   sync:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    steps:
-      - name: Configure SSH
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.ANTON_SSH_PRIVATE_KEY }}
-          SSH_KNOWN_HOSTS: ${{ secrets.ANTON_SSH_KNOWN_HOSTS }}
-        run: |
-          install -m 700 -d ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
+    timeout-minutes: 10
 
-      - name: Fast-forward Anton and relink skills
+    steps:
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ vars.TS_CLIENT_ID }}
+          audience: ${{ vars.TS_AUDIENCE }}
+          tags: tag:github-actions
+          hostname: gha-skills-${{ github.run_id }}
+
+      - name: Trigger Arcane Git Sync
         env:
-          ANTON_HOST: ${{ secrets.ANTON_SSH_HOST }}
-          ANTON_USER: ${{ secrets.ANTON_SSH_USER }}
+          ARCANE_WEBHOOK_TOKEN: ${{ secrets.ARCANE_WEBHOOK_TOKEN }}
         run: |
-          ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes "$ANTON_USER@$ANTON_HOST" \
-            'git -C "$HOME/DEV/github/skills" pull --ff-only origin main && "$HOME/DEV/github/skills/install.sh"'
+          python3 - <<'PYCODE'
+          import os, urllib.request
+          url = 'http://raygun:3552/api/webhooks/trigger/' + os.environ['ARCANE_WEBHOOK_TOKEN']
+          request = urllib.request.Request(url, method='POST')
+          try:
+              with urllib.request.urlopen(request, timeout=120) as response:
+                  print('Arcane Git Sync HTTP', response.status)
+          except Exception:
+              raise SystemExit('Arcane Git Sync failed or timed out; inspect Arcane before retrying.') from None
+          PYCODE
