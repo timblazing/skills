@@ -27,6 +27,11 @@
 - Non-product repos (skills, dotfiles, notes, config): push to the default branch directly unless the repo says otherwise.
 - "full stop" → `full-stop` (PR ready, user merges). "full send" → `full-send` (agent merges, personal repos only). Second opinions → `cross-review` at medium effort; Greptile only on big or risky PRs.
 
+## Local machine
+- Never start Docker, Colima, Podman, OrbStack, Lima, or any other local VM or container runtime on this Mac. They use too many resources.
+- When asked to run something "isolated" or "not on my machine", use a remote sandbox (for example a Cloudflare Sandbox) or a throwaway scratch directory with its own npm cache. If neither fits, ask before choosing.
+- Stop any server or background process you started once the user is done with it.
+
 ## External apps
 - Composio CLI is the gateway for external services: `composio search "<task>"` → `composio execute <slug>`; missing connection → `composio link <toolkit>`. Details: `composio-cli` skill.
 - Use `gh` for git/GitHub work on the current repo (PRs, issues, checks).
