@@ -18,6 +18,7 @@ the agents discover them.
 | [design-taste-frontend](skills/design-taste-frontend) | Research-driven art direction, page composition, and browser critique | tasteskill v2 (local install) |
 | [open-pencil](skills/open-pencil) | Inspect, edit and export `.fig` files via OpenPencil | [open-pencil/open-pencil](https://github.com/open-pencil/open-pencil) (MIT) |
 | [pick-ui-library](skills/pick-ui-library) | Curated library picks for frontend tasks (manual invoke only) | [emilkowalski/skills](https://github.com/emilkowalski/skills) (MIT) |
+| [scan-to-threejs](skills/scan-to-threejs) | Rebuild editable Three.js rooms from scans and photo references | [wesbos/3d-model-anything](https://github.com/wesbos/3d-model-anything/tree/main/.agents/skills/scan-to-threejs) |
 | [ui-check](skills/ui-check) | Headless screenshots to visually check UI | mine |
 | [ui-qa](skills/ui-qa) | Functional browser testing: flows, forms, console errors | mine |
 | [ui-evidence](skills/ui-evidence) | Before/after screenshots committed to a PR | mine |
