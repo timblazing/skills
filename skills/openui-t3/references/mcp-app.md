@@ -5,7 +5,17 @@ The `mcp/` package serves two read-only tools:
 - `get_openui_instructions`: signatures/prompt from the exact library used by the renderer.
 - `render_openui`: validates a completed program and returns an MCP App view. Pass `code` and optional `title`, or `template: "demo"` for the connection test.
 
-The view uses OpenUI's renderer and `openuiChatLibrary`. Its `@ToAssistant` events become MCP Apps `app.sendMessage` requests, including the action's message, context, form name, and field values. T3 asks for approval and then queues a turn in the current conversation. The view can open links through the host, but has no live-data `toolProvider`, arbitrary tool access, credentials, persistence, or external network access.
+The view uses OpenUI's renderer and `openuiChatLibrary`. Its `@ToAssistant` events become MCP Apps `app.sendMessage` requests, including the action's message and one compact selection envelope (explicit action context, falling back to form state for older programs). T3 asks for approval and then queues a turn in the current conversation. The view can open links through the host, but has no live-data `toolProvider`, arbitrary tool access, credentials, persistence, or external network access.
+
+## Selection sharing (integration 0.2.0)
+
+`render_openui` accepts optional `selectionKeys` (up to 20 reactive binding names without `$`). It returns a fresh `interfaceId` for each call. The user opts in with **Share selection**. The preview shows exactly the allowlisted values; unlisted fields never enter model context. No fields are shared by default for custom programs. The connection demo permits `days` and `goal`.
+
+The SDK's advertised `updateModelContext` capability is required. Updates are debounced by 250ms, serialized, coalesced, and deduplicated. Wait for **Selection available to your next message** before using the composer. Stop sharing sends an empty selection envelope; oversized selections clear the previous selection and turn sharing off. Graceful teardown attempts a clear, but abrupt disconnect/remount cannot guarantee it: check visible status. There is no automatic uncertain-message retry or form restoration.
+
+Both context and handoffs use `{version:1, library, interfaceId, title, selection}` with an 8,000-byte UTF-8 limit. Explicit messages are limited to 2,000 characters plus that envelope. Stable IDs must be supplied by the program author. The selected payload is local data for the agent to interpret, never authority to perform external writes.
+
+Local SDK-host checks passed; live T3 selection-context delivery and simultaneous-frame isolation still need user confirmation. The previously confirmed live approved-message roundtrip remains valid for the earlier build.
 
 ## Install on another machine
 
@@ -40,7 +50,7 @@ agent-browser --session openui-qa open file:///tmp/openui-mcp-browser-test.html
 agent-browser --session openui-qa snapshot -i
 ```
 
-The fixture uses the official MCP Apps SDK `AppBridge`, a sandboxed iframe, and the actual server's tool result/resource. It captures messages locally and never sends a T3 message. `window.testMode` accepts `approve`, `decline`, or `delay`. In delay mode, `window.approvePending()` releases the request. Inspect `window.handoffRequests` and `window.handoffMessages` to verify duplicate prevention and declined requests. Test at 1440×900 and 393×852 and close the session afterward. This validates the app's protocol behavior, not T3's approval dialog or live agent execution.
+The fixture uses the official MCP Apps SDK `AppBridge`, a sandboxed iframe, and the actual server's tool result/resource. It captures messages locally and never sends a T3 message. `window.testMode` accepts `approve`, `decline`, `error`, or `delay`. In delay mode, `window.approvePending()` releases the request. Use `?theme=light` for light host variables and `?no-context` for unsupported context capability. `window.contextUpdates` captures context requests; `window.contextDelay` can simulate slow acknowledgements. Inspect `window.handoffRequests` and `window.handoffMessages` to verify duplicate prevention and declined requests. Test at 1440×900 and 393×852 and close the session afterward. This validates the app's protocol behavior, not T3's approval dialog or live agent execution.
 
 ## Components and templates
 

@@ -24,8 +24,12 @@ test('stdio discovery, exact instructions, valid/invalid programs, and embedded 
     assert.notEqual(demo.isError, true);
     assert.equal(demo.structuredContent.title, 'Connection test');
     assert.match(demo.structuredContent.code, /Send to agent/);
+    assert.deepEqual(demo.structuredContent.selectionKeys, ['days', 'goal']);
+    const second = await client.callTool({ name: 'render_openui', arguments: { template: 'demo' } });
+    assert.notEqual(demo.structuredContent.interfaceId, second.structuredContent.interfaceId);
     const custom = await client.callTool({ name: 'render_openui', arguments: { code: 'root = Card([TextContent("Custom response")])' } });
     assert.notEqual(custom.isError, true);
+    assert.deepEqual(custom.structuredContent.selectionKeys, []);
     for (const code of ['root = InventedComponent("wrong")', 'root = Card([missing])']) {
       const bad = await client.callTool({ name: 'render_openui', arguments: { code } });
       assert.equal(bad.isError, true);
