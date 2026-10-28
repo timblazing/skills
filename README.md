@@ -18,7 +18,7 @@ the agents discover them.
 | [design-taste-frontend](skills/design-taste-frontend) | Research-driven art direction, page composition, and browser critique | tasteskill v2 (local install) |
 | [open-pencil](skills/open-pencil) | Inspect, edit and export `.fig` files via OpenPencil | [open-pencil/open-pencil](https://github.com/open-pencil/open-pencil) (MIT) |
 | [openui](skills/openui) | Official OpenUI generative UI, language, components, and agent integration guidance | [thesysdev/skills](https://github.com/thesysdev/skills), revision `bcd93adc9185e333bc9a83b29f7d81d67ab1935f` (complete skill directory) |
-| [openui-t3](skills/openui-t3) | Render interactive OpenUI interfaces inside T3 chat without a separate app | mine; pinned OpenUI browser bundle `0.2.1` |
+| [openui-t3](skills/openui-t3) | In-chat OpenUI interfaces: Codex MCP App with approved agent handoff, plus HTML fallback | mine; official OpenUI React runtime and MCP Apps SDK |
 | [pick-ui-library](skills/pick-ui-library) | Curated library picks for frontend tasks (manual invoke only) | [emilkowalski/skills](https://github.com/emilkowalski/skills) (MIT) |
 | [scan-to-threejs](skills/scan-to-threejs) | Rebuild editable Three.js rooms from scans and photo references | [wesbos/3d-model-anything](https://github.com/wesbos/3d-model-anything/tree/main/.agents/skills/scan-to-threejs) |
 | [ui-check](skills/ui-check) | Headless screenshots to visually check UI | mine |

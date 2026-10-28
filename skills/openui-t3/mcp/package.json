@@ -1,0 +1,30 @@
+{
+  "name": "openui-t3-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "OpenUI MCP App for interactive interfaces inside T3 Code",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node server.mjs",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "check": "node --check server.mjs && node --check app.mjs && node --check build.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/client": "2.4.0",
+    "@modelcontextprotocol/ext-apps": "2.0.4",
+    "@modelcontextprotocol/server": "2.4.0",
+    "@openuidev/lang-core": "1.0.2",
+    "@openuidev/react-lang": "1.0.2",
+    "@openuidev/react-ui": "0.18.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

@@ -1,0 +1,11 @@
+root = Card([header, intro, ranges, summary, chart, experiment, note])
+header = CardHeader("OpenUI in T3", "MCP App connection test · sample data")
+intro = TextContent("The range buttons update this interface locally. Send to agent tests a message back into this conversation.")
+$days = "7"
+$goal = "Compare options for my next OpenUI experiment"
+ranges = Buttons([Button("7 days", @Set($days, "7"), "secondary"), Button("30 days", @Set($days, "30"), "secondary"), Button("Reset", @Reset($days, $goal), "tertiary")])
+summary = TextContent("Showing " + $days + " days · " + @Sum(values) + " sample tasks", "large-heavy")
+values = $days == "7" ? [12, 8, 5] : [48, 32, 20]
+chart = BarChart(["Codex", "Claude", "Shared"], [Series("Sample tasks", values)], "grouped", null, "Tasks", 210)
+experiment = Form("experiment", Buttons([Button("Send to agent", @ToAssistant("OpenUI handoff test: confirm that this interface message reached you, and repeat the experiment description and selected range. Do not change files or call tools for this test.", {goal: $goal, days: $days}), "secondary")]), [FormControl("Experiment description (editable)", Input("goal", "Type an experiment description", "text", null, $goal))])
+note = TextContent("T3 will ask you to approve the message before sending it. The text box above is editable; Send to agent is the button.", "small")
