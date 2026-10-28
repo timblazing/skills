@@ -40,6 +40,8 @@ html, body { margin: 0; padding: 0; background: transparent; color: var(--openui
 #root :not(pre):not(code) { font-family: var(--font-sans, system-ui); }
 #root button, #root input { font: inherit; box-shadow: none; }
 #root input { color: var(--openui-text-neutral-primary); }
+#root .openui-checkbox-item-description { margin: 4px 0 0; }
+#root .openui-table-cell { white-space: normal; min-width: 140px; vertical-align: top; }
 #root[aria-busy="true"] { opacity: .65; }
 #sharing { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--openui-border-default); }
 #sharing button { min-height: 36px; padding: 6px 12px; border: 1px solid var(--openui-border-interactive); border-radius: 6px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
@@ -50,7 +52,10 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--color-rin
 #sharing-status { margin: 8px 0; }
 #sharing summary { cursor: pointer; }
 #selection-preview { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; max-height: 220px; overflow: auto; }
-@media (max-width: 480px) { #root button, #root input, #sharing button { min-height: 44px; } }
+@media (max-width: 480px) {
+  #root button:not([role="checkbox"]):not([role="radio"]), #root input:not([type="checkbox"]):not([type="radio"]), #sharing button { min-height: 44px; }
+  #root .openui-checkbox-item-container { min-height: 44px; }
+}
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 #status, #error { margin: 12px 0 0; font-size: 13px; }
 #status { color: var(--color-text-secondary, var(--muted-foreground, #b6b6bf)); }

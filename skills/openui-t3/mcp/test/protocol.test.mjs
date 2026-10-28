@@ -27,6 +27,14 @@ test('stdio discovery, exact instructions, valid/invalid programs, and embedded 
     assert.deepEqual(demo.structuredContent.selectionKeys, ['days', 'goal']);
     const second = await client.callTool({ name: 'render_openui', arguments: { template: 'demo' } });
     assert.notEqual(demo.structuredContent.interfaceId, second.structuredContent.interfaceId);
+    const decision = await client.callTool({ name: 'render_openui', arguments: { template: 'decision' } });
+    assert.notEqual(decision.isError, true, JSON.stringify(decision.content));
+    assert.deepEqual(decision.structuredContent.selectionKeys, ['selectedOptions', 'reviewFocus']);
+    assert.match(decision.structuredContent.code, /openui-personal-library-v1/);
+    const override = await client.callTool({ name: 'render_openui', arguments: {
+      template: 'decision', code: 'root = Card([TextContent("Override")])',
+    } });
+    assert.deepEqual(override.structuredContent.selectionKeys, []);
     const custom = await client.callTool({ name: 'render_openui', arguments: { code: 'root = Card([TextContent("Custom response")])' } });
     assert.notEqual(custom.isError, true);
     assert.deepEqual(custom.structuredContent.selectionKeys, []);

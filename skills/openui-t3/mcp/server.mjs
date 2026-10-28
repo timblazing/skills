@@ -11,33 +11,33 @@ const resourceUri = 'ui://openui/interface.html';
 const read = (path) => readFile(new URL(path, import.meta.url), 'utf8');
 
 export async function createServer() {
-  const [html, specText, demo] = await Promise.all([
-    read('./dist/app.html'), read('./dist/library.json'), read('../assets/mcp-demo.openui'),
+  const [html, specText, demo, decision] = await Promise.all([
+    read('./dist/app.html'), read('./dist/library.json'), read('../assets/mcp-demo.openui'), read('../assets/decision-review.openui'),
   ]);
   const spec = JSON.parse(specText);
   const parser = createParser(spec.schema, spec.root);
-  const server = new McpServer({ name: 'openui', version: '0.2.0' });
+  const server = new McpServer({ name: 'openui', version: '0.2.1' });
   server.registerTool('get_openui_instructions', {
     description: 'Get the exact OpenUI component signatures and language instructions before generating an interactive interface. Use render_openui to display the program inside T3 Code.',
     inputSchema: z.object({}),
     annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
-  }, async () => ({ content: [{ type: 'text', text: `${spec.prompt}\n\nT3 host rules: Use @ToAssistant for an agent handoff; T3 asks the user to approve each message. Use reactive state for local controls. Pass selectionKeys to render_openui to allow the user to share only named reactive values with their next normal message. Sharing is opt-in and starts no turn. Use stable item IDs as values. @ToAssistant context should contain only selected values, never an entire dataset. Query/Mutation have no toolProvider in this first version. Do not put credentials in the interface. Call render_openui with your completed program. Use template="demo" to test the connection.` }] }));
+  }, async () => ({ content: [{ type: 'text', text: `${spec.prompt}\n\nT3 host rules: Use @ToAssistant for an agent handoff; T3 asks the user to approve each message. Use reactive state for local controls. Pass selectionKeys to render_openui to allow the user to share only named reactive values with their next normal message. Sharing is opt-in and starts no turn. Use stable item IDs as values. @ToAssistant context should contain only selected values, never an entire dataset. Query/Mutation have no toolProvider in this first version. Do not put credentials in the interface. Call render_openui with your completed program. Use template="demo" to test the connection, or template="decision" for a reusable option comparison and shortlist review. Adapt assets/decision-review.openui for other decisions; keep stable IDs and explicit scope/provenance.` }] }));
 
   registerAppTool(server, 'render_openui', {
     title: 'OpenUI interface',
-    description: 'Render a real interactive OpenUI interface inside this T3 Code conversation. Use for forms, charts, filtering, and decision widgets. Call get_openui_instructions first when generating code. template="demo" runs the built-in button-to-agent test. Buttons with @ToAssistant can send a user-approved message back into this conversation.',
+    description: 'Render a real interactive OpenUI interface inside this T3 Code conversation. Use for forms, charts, filtering, and decision widgets. Call get_openui_instructions first when generating code. template="demo" runs the connection test; template="decision" compares and shortlists proposed OpenUI workflows. Buttons with @ToAssistant can send a user-approved message back into this conversation.',
     inputSchema: z.object({
       title: z.string().min(1).max(140).default('OpenUI interface'),
       code: z.string().min(1).max(60_000).optional(),
-      template: z.literal('demo').optional(),
+      template: z.enum(['demo', 'decision']).optional(),
       selectionKeys: z.array(z.string().regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/).max(80)).max(20).optional()
         .describe('Explicit reactive state keys eligible for opt-in sharing with the next user message. Use stable item IDs as values; omit secrets.'),
     }),
     annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
     _meta: { ui: { resourceUri } },
   }, async ({ title, code, template, selectionKeys }) => {
-    const program = code ?? (template === 'demo' ? demo : undefined);
-    if (!program) return { isError: true, content: [{ type: 'text', text: 'Supply code or template="demo".' }] };
+    const program = code ?? (template === 'demo' ? demo : template === 'decision' ? decision : undefined);
+    if (!program) return { isError: true, content: [{ type: 'text', text: 'Supply code or template="demo" / "decision".' }] };
     const result = parser.parse(program);
     const { incomplete, errors, unresolved, orphaned } = result.meta;
     if (!result.root || incomplete || errors.length || unresolved.length || orphaned.length) {
@@ -46,7 +46,7 @@ export async function createServer() {
     return {
       content: [{ type: 'text', text: `OpenUI interface: ${title}. This tool has an MCP App view. Messages from its buttons require T3 approval.\n\n${program}` }],
       structuredContent: { title, code: program, interfaceId: randomUUID(),
-        selectionKeys: selectionKeys ?? (template === 'demo' && !code ? ['days', 'goal'] : []) },
+        selectionKeys: selectionKeys ?? (!code && template === 'demo' ? ['days', 'goal'] : !code && template === 'decision' ? ['selectedOptions', 'reviewFocus'] : []) },
     };
   });
   registerAppResource(server, 'OpenUI interface', resourceUri, { mimeType: RESOURCE_MIME_TYPE }, async () => ({

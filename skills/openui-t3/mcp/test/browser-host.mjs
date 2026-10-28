@@ -3,20 +3,24 @@ import { AppBridge } from '@modelcontextprotocol/ext-apps/app-bridge';
 import { PostMessageTransport } from '@modelcontextprotocol/ext-apps';
 
 const frame = document.getElementById('app');
+const light = new URLSearchParams(location.search).get('theme') === 'light';
 const bridge = new AppBridge(null, { name: 'OpenUI QA host', version: '1.0.0' }, {
   message: { text: {} }, openLinks: {},
   ...(new URLSearchParams(location.search).has('no-context') ? {} : { updateModelContext: { text: {} } }),
 }, { hostContext: {
   theme: new URLSearchParams(location.search).get('theme') === 'light' ? 'light' : 'dark', displayMode: 'inline', availableDisplayModes: ['inline'], platform: 'web',
   containerDimensions: { width: innerWidth, maxHeight: 2000 },
-  styles: { variables: {
+  styles: { variables: light ? {
+    '--color-background-primary': '#ffffff', '--color-background-secondary': '#f0f0f0',
+    '--color-background-inverse': '#202020', '--color-text-primary': '#202020',
+    '--color-text-secondary': '#606060', '--color-text-inverse': '#ffffff', '--color-border-primary': '#d0d0d0',
+  } : {
     '--color-background-primary': '#202024', '--color-background-secondary': '#303036',
     '--color-background-inverse': '#ededf0', '--color-text-primary': '#ededf0',
     '--color-text-secondary': '#b6b6bf', '--color-text-inverse': '#161618',
     '--color-border-primary': '#44444c',
   } },
 } });
-const light = new URLSearchParams(location.search).get('theme') === 'light';
 window.testMode = 'approve';
 window.contextUpdates = [];
 bridge.onupdatemodelcontext = async params => {
@@ -26,11 +30,6 @@ bridge.onupdatemodelcontext = async params => {
 };
 window.qaBridge = bridge;
 if (light) {
-  bridge.setHostContext({ theme: 'light', styles: { variables: {
-    '--color-background-primary': '#ffffff', '--color-background-secondary': '#f0f0f0',
-    '--color-background-inverse': '#202020', '--color-text-primary': '#202020',
-    '--color-text-secondary': '#606060', '--color-text-inverse': '#ffffff', '--color-border-primary': '#d0d0d0',
-  } } });
   document.body.style.background = '#fff';
 }
 

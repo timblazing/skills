@@ -9,7 +9,7 @@ await client.connect(new StdioClientTransport({
   command: process.execPath, args: [fileURLToPath(new URL('../server.mjs', import.meta.url))], stderr: 'pipe',
 }));
 try {
-  const result = await client.callTool({ name: 'render_openui', arguments: { template: 'demo' } });
+  const result = await client.callTool({ name: 'render_openui', arguments: { template: process.argv[3] ?? 'demo' } });
   const resource = await client.readResource({ uri: 'ui://openui/interface.html' });
   const bundle = await build({
     absWorkingDir: fileURLToPath(new URL('..', import.meta.url)),

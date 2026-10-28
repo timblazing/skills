@@ -1,6 +1,6 @@
 {
   "name": "openui-t3-mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "description": "OpenUI MCP App for interactive interfaces inside T3 Code",
