@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>__DOCUMENT_TITLE__</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@openuidev/browser-bundle@0.2.1/dist/openui-styles.css">
+<style>
+:root {
+  --openui-background: transparent;
+  --openui-foreground: var(--card, #202024);
+  --openui-text-neutral-primary: var(--foreground, #ededf0);
+  --openui-text-neutral-secondary: var(--muted-foreground, #b6b6bf);
+  --openui-text-neutral-tertiary: var(--muted-foreground, #b6b6bf);
+  --openui-text-accent-primary: var(--primary-foreground, #161618);
+  --openui-interactive-accent-default: var(--primary, #e4e4e7);
+  --openui-interactive-accent-hover: var(--accent, #cacaD0);
+  --openui-interactive-accent-pressed: var(--secondary, #b0b0ba);
+  --openui-highlight: var(--secondary, #303036);
+  --openui-highlight-subtle: var(--secondary, #303036);
+  --openui-border-default: var(--border, #44444c);
+  --openui-border-interactive: var(--border, #44444c);
+  --openui-font-body: var(--font-sans, system-ui);
+}
+html, body { margin: 0; padding: 0; background: transparent; color: var(--foreground, #ededf0); font-family: var(--font-sans, system-ui); }
+* { box-sizing: border-box; }
+#root { min-width: 0; }
+details { margin-top: 12px; color: var(--muted-foreground, #b6b6bf); font-size: 13px; }
+summary { cursor: pointer; padding: 8px 0; }
+textarea { display: block; width: 100%; min-height: 140px; resize: vertical; padding: 12px; border: 1px solid var(--border, #44444c); border-radius: var(--radius, 8px); background: var(--secondary, #303036); color: var(--foreground, #ededf0); font-family: var(--font-mono, monospace); font-size: 12px; }
+#error { color: var(--destructive, #ff8888); white-space: pre-wrap; }
+/* The chat surface supplies the outer frame. */
+.openui-card { background: transparent !important; border: 0 !important; padding: 0 !important; box-shadow: none !important; }
+</style>
+</head>
+<body>
+<div id="root" data-ui><p>Loading OpenUI renderer…</p></div>
+<p id="error" role="alert" hidden></p>
+<details id="action-details" hidden><summary>Action captured — copy into chat to continue</summary><textarea id="action-payload" aria-label="Action payload to paste into chat" readonly></textarea></details>
+<script id="openui-program" type="application/json">__PROGRAM_JSON__</script>
+<script src="https://cdn.jsdelivr.net/npm/@openuidev/browser-bundle@0.2.1/dist/openui-bundle.min.js"></script>
+<script>
+(() => {
+  const error = document.getElementById('error');
+  const fail = message => { error.hidden = false; error.textContent = String(message); };
+  if (!window.__OpenUI) { fail('OpenUI browser bundle did not load. Check CDN access.'); return; }
+  const { React, createRoot, Renderer, openuiChatLibrary } = window.__OpenUI;
+  const response = JSON.parse(document.getElementById('openui-program').textContent);
+  window.openuiDiagnostics = { parse: null, errors: [], state: {}, actions: [] };
+  window.openuiLibraryPrompt = openuiChatLibrary.prompt({ bindings: true, builtinFunctions: true });
+  createRoot(document.getElementById('root')).render(React.createElement(Renderer, {
+    response, library: openuiChatLibrary, isStreaming: false,
+    onParseResult: result => { window.openuiDiagnostics.parse = result; },
+    onStateUpdate: state => { window.openuiDiagnostics.state = state; },
+    onError: errors => {
+      window.openuiDiagnostics.errors = errors;
+      error.hidden = errors.length === 0;
+      error.textContent = errors.length ? JSON.stringify(errors, null, 2) : '';
+    },
+    onAction: event => {
+      window.openuiDiagnostics.actions.push(event);
+      document.getElementById('action-payload').value = JSON.stringify(event, null, 2);
+      const details = document.getElementById('action-details');
+      details.hidden = false;
+      details.open = true;
+    }
+  }));
+})();
+</script>
+</body>
+</html>
