@@ -1,0 +1,32 @@
+/* Components foundations adapted from timblazing/components@107bbc7, MIT.
+   Scoped CSS replaces its Tailwind build; no site chrome or web font is copied. */
+.personal-card { padding: 20px; background: transparent; color: var(--openui-text-neutral-primary); font: 14px/1.5 var(--font-sans, 'SF Pro Text', -apple-system, system-ui, sans-serif); }
+.personal-card h1 { font-size: 22px; font-weight: 600; line-height: 1.25; margin: 0 0 8px; }
+.personal-card h2 { font-size: 17px; font-weight: 600; margin: 0 0 6px; }
+.personal-card p { margin: 8px 0 14px; overflow-wrap: anywhere; }
+.personal-card .muted, .personal-card .small { color: var(--openui-text-neutral-secondary); font-size: 13px; }
+.personal-card .large-heavy { font-size: 18px; font-weight: 600; }
+.personal-card label { display: grid; gap: 6px; min-width: 0; }
+.personal-card input:not([type=checkbox]), .personal-card select { width: 100%; min-width: 0; min-height: 40px; padding: 8px 10px; border: 1px solid var(--openui-border-default); border-radius: 6px; background: var(--openui-foreground); color: inherit; font: inherit; }
+.personal-card .filters { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin: 18px 0; }
+.personal-card .check { display: flex; align-items: center; gap: 10px; min-height: 44px; overflow-wrap: anywhere; }
+.personal-card input[type=checkbox] { width: 18px; height: 18px; flex: 0 0 18px; accent-color: var(--openui-text-neutral-primary); }
+.personal-card button { min-height: 40px; border: 1px solid var(--openui-border-default); border-radius: 6px; padding: 8px 12px; background: transparent; color: inherit; cursor: pointer; }
+.personal-card button:hover { background: var(--openui-highlight); }
+.personal-card :is(input,select,button,summary):focus-visible { outline: 2px solid var(--color-ring-primary, #888); outline-offset: 3px; }
+.personal-card .review-row { border-top: 1px solid var(--openui-border-default); padding: 12px 0; }
+.personal-card .row-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.personal-card .badge { border: 1px solid var(--openui-border-default); border-radius: 4px; padding: 2px 6px; font-size: 12px; white-space: normal; flex-shrink: 0; max-width: 40%; }
+.personal-card .success { color: var(--success, #24834c); } .personal-card .warning { color: var(--warning, #a36808); } .personal-card .danger { color: var(--destructive, #c33); }
+.personal-card summary { min-height: 40px; cursor: pointer; padding: 8px 0; }
+.personal-card dl { margin: 8px 0; } .personal-card dl div { display: grid; grid-template-columns: minmax(90px, 1fr) 3fr; gap: 12px; margin: 8px 0; }
+.personal-card dt { color: var(--openui-text-neutral-secondary); } .personal-card dd { margin: 0; overflow-wrap: anywhere; }
+.personal-card .review-actions { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin: 18px 0; }
+.personal-card .empty { padding: 24px 12px; border: 1px solid var(--openui-border-default); border-radius: 8px; }
+@media(max-width: 600px) { .personal-card { padding: 16px; } .personal-card .filters { grid-template-columns: 1fr 1fr; } .personal-card .filters label:first-child { grid-column: 1/-1; } .personal-card :is(button,select,input:not([type=checkbox])) { min-height: 44px; } .personal-card .review-actions { display: grid; grid-template-columns: 1fr; } .personal-card dl div { grid-template-columns: 1fr; gap: 2px; } }
+.personal-card .snapshot-table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+.personal-card .snapshot-table caption { text-align: left; color: var(--openui-text-neutral-secondary); padding-bottom: 8px; }
+.personal-card .snapshot-table th { text-align: left; font-size: 13px; font-weight: 500; color: var(--openui-text-neutral-secondary); }
+.personal-card .snapshot-table :is(th,td) { padding: 12px 8px; border-bottom: 1px solid var(--openui-border-default); vertical-align: top; overflow-wrap: anywhere; }
+.personal-card .snapshot-table .badge { max-width: 100%; display: inline-block; }
+@media(max-width:600px) { .personal-card .snapshot-table :is(tbody,tr,td) { display: block; width: 100%; } .personal-card .snapshot-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } .personal-card .snapshot-table td { border: 0; padding: 4px 0; } .personal-card .snapshot-table tr { border-top: 1px solid var(--openui-border-default); padding: 12px 0; } .personal-card .snapshot-table td[data-label]::before { content: attr(data-label) ': '; color: var(--openui-text-neutral-secondary); } }

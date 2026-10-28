@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
+import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
 test('stdio discovery, exact instructions, valid/invalid programs, and embedded resource', async () => {
@@ -15,11 +16,11 @@ test('stdio discovery, exact instructions, valid/invalid programs, and embedded 
   try {
     const { tools } = await client.listTools();
     const renderer = tools.find(tool => tool.name === 'render_openui');
-    assert.equal(renderer._meta.ui.resourceUri, 'ui://openui/interface.html');
+    assert.equal(renderer._meta.ui.resourceUri, 'ui://openui/personal-v1.html');
     assert.equal(renderer.annotations.readOnlyHint, true);
     const instructions = await client.callTool({ name: 'get_openui_instructions', arguments: {} });
     assert.match(instructions.content[0].text, /root = Card/);
-    assert.match(instructions.content[0].text, /FormControl\(/);
+    assert.match(instructions.content[0].text, /ComparisonPanel\(/);
     const demo = await client.callTool({ name: 'render_openui', arguments: { template: 'demo', title: 'Connection test' } });
     assert.notEqual(demo.isError, true);
     assert.equal(demo.structuredContent.title, 'Connection test');
@@ -31,6 +32,33 @@ test('stdio discovery, exact instructions, valid/invalid programs, and embedded 
     assert.notEqual(decision.isError, true, JSON.stringify(decision.content));
     assert.deepEqual(decision.structuredContent.selectionKeys, ['selectedOptions', 'reviewFocus']);
     assert.match(decision.structuredContent.code, /openui-personal-library-v1/);
+    assert.equal(decision.structuredContent.library, 'openui-personal@1');
+    for (const template of ['plan', 'snapshot']) {
+      const result = await client.callTool({ name: 'render_openui', arguments: { template } });
+      assert.notEqual(result.isError, true, JSON.stringify(result.content));
+      assert.equal(result.structuredContent.library, 'openui-personal@1');
+    }
+    const legacyTool = tools.find(tool => tool.name === 'render_openui_legacy');
+    assert.equal(legacyTool._meta.ui.resourceUri, 'ui://openui/interface.html');
+    for (const file of ['mcp-demo', 'decision-review-legacy']) {
+      const code = await readFile(new URL(`../../assets/${file}.openui`, import.meta.url), 'utf8');
+      const result = await client.callTool({ name: 'render_openui_legacy', arguments: { code } });
+      assert.notEqual(result.isError, true, JSON.stringify(result.content));
+      assert.equal(result.structuredContent.library, 'openui-chat@0.18.1');
+    }
+    const legacyInstructions = await client.callTool({ name: 'get_openui_instructions', arguments: { library: 'legacy' } });
+    assert.match(legacyInstructions.content[0].text, /BarChart\(/);
+    assert.match(legacyInstructions.content[0].text, /LineChart\(/);
+    const legacyResource = await client.readResource({ uri: legacyTool._meta.ui.resourceUri });
+    assert.ok(Buffer.byteLength(legacyResource.contents[0].text) < 5 * 1024 * 1024);
+    const mismatch = await client.callTool({ name: 'render_openui', arguments: { template: 'demo', library: 'legacy' } });
+    assert.equal(mismatch.isError, true);
+    const duplicate = decision.structuredContent.code.replace('"id": "plan-review"', '"id": "comparison"');
+    assert.equal((await client.callTool({ name: 'render_openui', arguments: { code: duplicate } })).isError, true);
+    const unbound = decision.structuredContent.code.replace(', $selectedOptions, $reviewFocus)', ', {}, "risks")');
+    assert.equal((await client.callTool({ name: 'render_openui', arguments: { code: unbound } })).isError, true);
+    const emptyPanel = decision.structuredContent.code.replace(/\[\{.*\}\], \$selectedOptions/, '[], $selectedOptions');
+    assert.notEqual((await client.callTool({ name: 'render_openui', arguments: { code: emptyPanel } })).isError, true);
     const override = await client.callTool({ name: 'render_openui', arguments: {
       template: 'decision', code: 'root = Card([TextContent("Override")])',
     } });
@@ -38,7 +66,7 @@ test('stdio discovery, exact instructions, valid/invalid programs, and embedded 
     const custom = await client.callTool({ name: 'render_openui', arguments: { code: 'root = Card([TextContent("Custom response")])' } });
     assert.notEqual(custom.isError, true);
     assert.deepEqual(custom.structuredContent.selectionKeys, []);
-    for (const code of ['root = InventedComponent("wrong")', 'root = Card([missing])']) {
+    for (const code of ['root = InventedComponent("wrong")', 'root = Card([missing])', 'root = Card([Button("Bad", @InventedAction())])']) {
       const bad = await client.callTool({ name: 'render_openui', arguments: { code } });
       assert.equal(bad.isError, true);
       assert.match(bad.content[0].text, /Invalid OpenUI program/);

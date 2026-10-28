@@ -21,6 +21,9 @@ const bridge = new AppBridge(null, { name: 'OpenUI QA host', version: '1.0.0' },
     '--color-border-primary': '#44444c',
   } },
 } });
+window.addEventListener('message', event => {
+  if (event.source === frame.contentWindow && event.data?.qaDiagnostics) window.qaDiagnostics = event.data.qaDiagnostics;
+});
 window.testMode = 'approve';
 window.contextUpdates = [];
 bridge.onupdatemodelcontext = async params => {
@@ -31,6 +34,7 @@ bridge.onupdatemodelcontext = async params => {
 window.qaBridge = bridge;
 if (light) {
   document.body.style.background = '#fff';
+  document.documentElement.style.background = '#fff';
 }
 
 window.handoffMessages = [];

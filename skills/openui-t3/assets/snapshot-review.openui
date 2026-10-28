@@ -1,0 +1,4 @@
+root = Card([panel])
+$selectedOptions = {}
+$reviewFocus = "tradeoffs"
+panel = SnapshotTable("Repository finding snapshot", "Sample repository findings \u00b7 sample-revision \u00b7 2026-10-28; static snapshot, no live refresh", [{"id": "finding-1", "title": "Example missing empty state", "status": "needs review", "details": "Illustrative finding only; no actual repository was audited.", "criteria": {"File": "src/example.tsx:12", "Severity": "medium", "Revision": "sample-revision"}}, {"id": "finding-2", "title": "Example keyboard follow-up", "status": "unverified", "details": "Test keyboard access before deciding whether a fix is needed.", "criteria": {"File": "src/example.tsx:48", "Severity": "low", "Revision": "sample-revision"}}], $selectedOptions, $reviewFocus)

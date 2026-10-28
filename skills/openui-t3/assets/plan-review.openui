@@ -1,0 +1,4 @@
+root = Card([panel])
+$selectedOptions = {}
+$reviewFocus = "tradeoffs"
+panel = ReviewChecklist("Review an implementation plan", "Sample plan \u00b7 example only \u00b7 2026-10-28", [{"id": "inspect", "title": "Inspect current contract", "status": "complete", "details": "Sample completed inspection; not a claim about your repository.", "criteria": {"Evidence": "Sample inspection note"}}, {"id": "implement", "title": "Implement scoped changes", "status": "pending", "details": "Review the assumptions before implementation.", "criteria": {"Assumption": "Only the requested companion changes", "Risk": "A session restart is needed"}}, {"id": "validate", "title": "Validate and discuss findings", "status": "pending", "details": "Run local checks and leave live host acceptance to the user.", "criteria": {"Evidence": "Record actual commands and results"}}], $selectedOptions, $reviewFocus)

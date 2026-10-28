@@ -1,7 +1,7 @@
 // One bounded contract for both explicit messages and opt-in model context.
 export const MAX_BYTES = 8_000;
-export function envelope(interfaceId, title, selection) {
-  const value = { version: 1, library: 'openui-chat@0.18.1', interfaceId, title, selection };
+export function envelope(interfaceId, title, selection, library = 'openui-chat@0.18.1') {
+  const value = { version: 1, library, interfaceId, title, selection };
   const text = JSON.stringify(value);
   if (new TextEncoder().encode(text).length > MAX_BYTES) {
     throw new Error('Selection is too large to share. Choose fewer items or shorten the text.');

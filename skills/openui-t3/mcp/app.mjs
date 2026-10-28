@@ -2,10 +2,10 @@ import { App, applyDocumentTheme, applyHostStyleVariables } from '@modelcontextp
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Renderer } from '@openuidev/react-lang';
-import { library } from './library.mjs';
+import { library, libraryId } from './library.mjs';
 import { envelope, selectState, actionSelection, contextQueue } from './handoff.mjs';
 
-const app = new App({ name: 'OpenUI for T3', version: '0.2.0' }, {});
+const app = new App({ name: 'OpenUI for T3', version: '0.3.0' }, {});
 const view = document.getElementById('root');
 const root = createRoot(view);
 const status = document.getElementById('status');
@@ -20,7 +20,7 @@ window.openuiLibraryPrompt = library.prompt({ bindings: true, builtinFunctions: 
 const fail = message => { error.hidden = false; error.textContent = String(message); };
 const queueContext = contextQueue(text => app.updateModelContext({ content: [{ type: 'text', text }] }, { timeout: 10_000 }));
 function selected() { return selectState(window.openuiDiagnostics.state, keys); }
-function currentEnvelope() { return envelope(identity, title, selected()); }
+function currentEnvelope() { return envelope(identity, title, selected(), libraryId); }
 function updatePreview() {
   try { preview.textContent = JSON.stringify(currentEnvelope(), null, 2); }
   catch (cause) { preview.textContent = cause.message; }
@@ -30,10 +30,10 @@ function publish() {
   if (!connected || disposed) return;
   try {
     const wasSharing = sharing;
-    const text = sharing ? JSON.stringify(currentEnvelope()) : JSON.stringify(envelope(identity, title, {}));
+    const text = sharing ? JSON.stringify(currentEnvelope()) : JSON.stringify(envelope(identity, title, {}, libraryId));
     sharingStatus.textContent = sharing ? 'Updating selection…' : 'Clearing shared selection…';
     queueContext(text, () => {
-      const latest = sharing ? JSON.stringify(currentEnvelope()) : JSON.stringify(envelope(identity, title, {}));
+      const latest = sharing ? JSON.stringify(currentEnvelope()) : JSON.stringify(envelope(identity, title, {}, libraryId));
       if (sharing !== wasSharing || text !== latest) return;
       sharingStatus.textContent = sharing ? 'Selection available to your next message.' : 'Selection cleared. Sharing is off.';
     }, cause => {
@@ -45,7 +45,7 @@ function publish() {
     sharing = false;
     share.textContent = 'Share selection';
     share.setAttribute('aria-pressed', 'false');
-    queueContext(JSON.stringify(envelope(identity, title, {})), () => {
+    queueContext(JSON.stringify(envelope(identity, title, {}, libraryId)), () => {
       sharingStatus.textContent = 'Selection cleared. Sharing is off.';
     }, () => { sharingStatus.textContent = 'Could not clear the previous selection.'; });
     fail(cause.message);
@@ -76,7 +76,7 @@ async function onAction(event) {
       if (!app.getHostCapabilities()?.message) throw new Error('This host does not support messages from apps.');
       const text = event.humanFriendlyMessage?.trim();
       if (!text || text.length > 2_000) throw new Error('Use a message between 1 and 2,000 characters.');
-      const details = envelope(identity, title, actionSelection(event));
+      const details = envelope(identity, title, actionSelection(event), libraryId);
       status.textContent = 'Waiting for your approval in T3…';
       const result = await app.sendMessage({ role: 'user', content: [{
         type: 'text', text: `${text}\n\nOpenUI selection: ${JSON.stringify(details)}`,
@@ -102,6 +102,7 @@ async function onAction(event) {
 }
 function render(args, isStreaming = false) {
   if (typeof args?.code !== 'string') return;
+  if (args.library && args.library !== libraryId) { fail('Library/resource mismatch. Reopen with the matching render tool.'); return; }
   // Completed tool results carry a unique identity. Partial input does not enable sharing.
   if (args.interfaceId) identity = args.interfaceId;
   if (typeof args.title === 'string') { title = args.title; document.title = title; }
@@ -148,7 +149,7 @@ app.onhostcontextchanged = applyContext;
 app.onteardown = async () => {
   clearTimeout(timer);
   sharing = false;
-  if (connected && app.getHostCapabilities()?.updateModelContext) await queueContext(JSON.stringify(envelope(identity, title, {})));
+  if (connected && app.getHostCapabilities()?.updateModelContext) await queueContext(JSON.stringify(envelope(identity, title, {}, libraryId)));
   disposed = true;
   root.unmount();
   return {};

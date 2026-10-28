@@ -9,23 +9,36 @@ Use the official `openui` skill for language and component guidance. This compan
 
 ## Prefer the MCP App when available
 
-Discover the `openui` MCP server's `get_openui_instructions` and `render_openui` tools. Call the instructions tool for exact component signatures, then render the generated program with `render_openui`. The existing agent writes OpenUI Lang; the tool serves the interactive UI and makes no extra model call. For the connection test, call `render_openui` with `template: "demo"` and a descriptive title.
+Discover the `openui` server's `get_openui_instructions`, `render_openui`, and `render_openui_legacy`. Call instructions before generating a new program. The existing agent writes OpenUI Lang; rendering makes no extra inference call. The official React Lang renderer and MCP Apps SDK run inside self-contained bundled resources without a CDN, listener, or inference key.
 
-Pass `selectionKeys: ["selectedIds", "range"]` with custom programs to name reactive bindings eligible for selection sharing (omit the `$` prefix). Values identifying items must be stable IDs, not just display labels. Omit private inputs. Sharing starts **off**: the user clicks **Share selection**, inspects **Selection details**, waits for **Selection available to your next message**, then types normally in T3. Only allowlisted bindings are shared, with bounded, debounced, serialized updates. **Stop sharing** clears the selection. Hosts without context support show a disabled control. Context updates do not start a turn or restore form state. After source/tool-schema changes, rebuild and restart the agent session to load the new schema/resource.
+### Compact personal library (companion 0.3.0)
 
-The MCP App uses the official OpenUI React runtime, a single shared library definition, and the MCP Apps SDK. It bundles scripts and CSS into its HTML resource, so rendering requires no CDN or listening port. The Node MCP server is launched on demand over stdio by Codex.
+New programs use `get_openui_instructions({library:"personal"})` then **`render_openui`**. The exact contract is **openui-personal@1**, shared by renderer, generated schema and prompt in `mcp/library.mjs`. Do not use full-library signatures with this renderer.
 
-### Decision / review workflow (companion 0.2.1)
+Use a task template and adapt its complete sample snapshot:
 
-Use `render_openui({ template: "decision", title: "OpenUI workflow review" })` for the first useful workflow: compare proposed personal-library workflows, shortlist them, and choose a discussion focus. Empty selection shows all options and offers no Ask action. Selecting narrows the comparison; Clear shortlist restores all options. The template automatically allows sharing `selectedOptions` (a boolean record keyed by stable workflow IDs) and `reviewFocus`. Only `true` entries are shortlisted. Normal-composer context includes that record; the explicit Ask action supplies only selected IDs/titles and the review focus, and still requires T3 approval. A review request is discussion, not authorization to execute the proposed work.
+- `template:"decision"`: comparison and shortlist discussion; source `assets/decision-review.openui`.
+- `template:"plan"`: plan steps, assumptions and supplied status; source `assets/plan-review.openui`.
+- `template:"snapshot"`: searchable/selectable repository findings; source `assets/snapshot-review.openui`. The same component accepts agent-fetched service snapshots with service IDs, status, version/host/evidence criteria and provenance.
+- `template:"demo"`: connection test with editable description, range/reset and Send to agent.
 
-For a different decision, read [assets/decision-review.openui](assets/decision-review.openui), adapt the title, snapshot/provenance, option IDs, descriptions, scopes, tradeoffs, recommendation, and action request together, then pass `code` with `selectionKeys: ["selectedOptions", "reviewFocus"]`. Keep each checkbox name, selection-record key, and option ID in agreement. Label judgments as judgments; do not invent measurements or fetch live data from the frame. When a selection arrives in the next user message, discuss those options directly without rebuilding the interface unless the user asks for a revision. Context updates do not themselves start a reply.
+The core provides Card, CardHeader, TextContent, Disclosure, Button, Input, Checkbox, Select, Status, ComparisonPanel, ReviewChecklist and SnapshotTable. Read exact positional signatures from the tool. Each workflow uses `(title, provenance, items, selection, focus)`, where rows are `{id,title,status,details,criteria,recommendation?}`. Use unique stable IDs, at most 100 rows, and named string criteria. Bind selection to a declared boolean record `$variable` and focus to a declared string `$variable`; literal unbound workflow state is rejected. Selection does not change supplied completion status. Filtering/search/sorting retain hidden selections and show their count; Clear removes all selections. Empty selection omits Ask. Recommendations are explicitly judgments.
 
-OpenUI's `@ToAssistant` actions request a message into the current T3 conversation. **T3 asks the user to approve every message.** Never bypass that confirmation, auto-click Send to agent, or claim a real roundtrip passed based only on a local test host. An app message starts or queues an agent turn after approval. If the user sends a connection-test message, acknowledge its supplied description/range; do not rebuild or render another test in response.
+For another decision or review, adapt title, source/revision/time, stable IDs, descriptions, criteria, status, rationale and recommendations together. Label examples as sample data. Real snapshots need actual provenance; do not invent measurements, fetch live data from the frame, or treat a review selection as authorization to execute. When selected context arrives with the next normal message, discuss those entries directly without rebuilding the interface unless requested.
 
-T3 currently documents inline MCP Apps for Codex. For Claude or a host without MCP Apps, use the HTML fallback below. After MCP configuration changes, use T3's **Restart agent session** command and send another message in the same conversation; installing a skill alone does not refresh the current runtime's MCP tools.
+### Sharing and explicit requests
 
-Read [references/mcp-app.md](references/mcp-app.md) for installation, tests, custom components, and host limitations. MCP App source is in [mcp/](mcp/).
+Review templates automatically allowlist `selectedOptions` and `reviewFocus`. For custom programs, pass `selectionKeys` naming only the deliberate reactive values (without `$`). Unlisted/private fields must stay out of context. Sharing starts **off**. The user clicks **Share selection**, inspects **Selection details**, waits for **Selection available to your next message**, then types in T3. **Stop sharing** clears context. Hosts without context support show a disabled control. Updates are bounded, debounced, serialized and deduplicated; they start no turn and do not restore form state.
+
+Explicit workflow Ask sends only selected IDs/titles and focus. **T3 asks the user to approve each message.** Never bypass confirmation, auto-click Send to agent, or claim a real roundtrip from local SDK-host results. If an incoming `OpenUI handoff test` message arrives, acknowledge its supplied description/range without rendering another test or doing file work.
+
+### Full-library compatibility and charts
+
+Existing full-library programs use `get_openui_instructions({library:"legacy"})`, then **`render_openui_legacy`** (optionally `library:"legacy"`). This preserves the original openuiChatLibrary positional signatures as **openui-chat@0.18.1**. Its `template:"demo"` retains the original bar-chart connection test. `assets/decision-review-legacy.openui` preserves the prior decision program for explicit legacy `code`. BarChart and LineChart remain available in legacy; broad chart migration is deferred. The separate tools statically declare matching resource URIs, avoiding dynamic host routing assumptions. The HTML fallback below remains its own full-library/CDN contract.
+
+After source/tool-schema changes, rebuild and use T3's **Restart agent session**, then send another message in the same thread. Mounted frames and loaded tools do not update automatically. The original live approved-message roundtrip passed; 0.3.0 context sharing, normal-chat follow-up, approval/decline and two-frame isolation still need combined user-driven live acceptance. Headless phone checks are not physical-device proof.
+
+See [personal contract, design source, compatibility and checks](references/personal-library.md) and [installation/host boundaries](references/mcp-app.md). Keep upstream `skills/openui/` unchanged.
 
 ## HTML fallback workflow
 

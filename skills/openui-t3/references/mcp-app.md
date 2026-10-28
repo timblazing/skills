@@ -1,11 +1,12 @@
 # OpenUI MCP App in T3
 
-The `mcp/` package serves two read-only tools:
+The `mcp/` package serves three read-only tools:
 
 - `get_openui_instructions`: signatures/prompt from the exact library used by the renderer.
-- `render_openui`: validates a completed program and returns an MCP App view. Pass `code` and optional `title`, `template: "demo"` for the connection test, or `template: "decision"` for option comparison and shortlist discussion.
+- `render_openui_legacy`: preserves the full upstream library and its original demo/chart signatures.
+- `render_openui`: validates a completed program and returns an MCP App view. Pass `code` and optional `title`, `template: "demo"` for the connection test, or `template: "decision"`, `"plan"`, `"snapshot"` for the compact workflows. See [personal library v1](personal-library.md).
 
-The view uses OpenUI's renderer and `openuiChatLibrary`. Its `@ToAssistant` events become MCP Apps `app.sendMessage` requests, including the action's message and one compact selection envelope (explicit action context, falling back to form state for older programs). T3 asks for approval and then queues a turn in the current conversation. The view can open links through the host, but has no live-data `toolProvider`, arbitrary tool access, credentials, persistence, or external network access.
+The view uses OpenUI's renderer with `openui-personal@1` by default; the explicit legacy tool serves `openui-chat@0.18.1`. Its `@ToAssistant` events become MCP Apps `app.sendMessage` requests, including the action's message and one compact selection envelope (explicit action context, falling back to form state for older programs). T3 asks for approval and then queues a turn in the current conversation. The view can open links through the host, but has no live-data `toolProvider`, arbitrary tool access, credentials, persistence, or external network access.
 
 ## Selection sharing (integration 0.2.0)
 
@@ -38,7 +39,7 @@ Ask: "Show the OpenUI connection test." The agent should call `render_openui` wi
 
 ## Checks
 
-`npm test` builds the resource and tests a real MCP stdio connection: tool discovery/metadata, generated instructions, demo/custom program validation, malformed/unresolved/oversized programs, and the self-contained resource/CSP. T3's 5 MiB HTML limit is checked; this build is about 3.8 MiB.
+`npm test` builds the resource and tests a real MCP stdio connection: tool discovery/metadata, generated instructions, demo/custom program validation, malformed/unresolved/oversized programs, and the self-contained resource/CSP. T3's 5 MiB HTML limit is checked; both resources remain below the cap; `dist/measurements.json` gives exact current bytes.
 
 `npm run check` checks JavaScript syntax.
 
@@ -54,11 +55,11 @@ The fixture uses the official MCP Apps SDK `AppBridge`, a sandboxed iframe, and 
 
 ## Components and templates
 
-`mcp/library.mjs` is shared by the browser build, prompt generation, and parser schema. Add a custom component there using `defineComponent`, then extend the library with `.extend({ components: { add: [{ component, slots: ["Card.children"] }] } })`. Rebuild afterward. Do not change only the agent prompt or only the browser library.
+`mcp/library.mjs` is shared by the browser build, prompt generation, and parser schema. Add a custom component there with `defineComponent`, register it in `createLibrary` and the relevant child unions. Rebuild afterward. Do not change only the agent prompt or only the browser library.
 
 Keep reusable OpenUI programs in `assets/` and expose named templates only as needed. The initial `mcp-demo.openui` is a connection test, not a requirement to turn every response into a test. A new component must still fit under the resource-size limit.
 
-Companion 0.2.1 adds `assets/decision-review.openui`: a real first decision about which workflows should shape the personal library. It uses existing components and the shared library without adding dependencies. Checkboxes hold stable IDs as boolean record keys; the comparison filters to selected rows, falling back to all rows when empty. Review focus chooses tradeoffs/scope/risks/order. The Ask action is absent when empty and sends only selected IDs/titles, decision ID, and focus; the normal-composer sharing allowlist is `selectedOptions` and `reviewFocus`. Adapt the fixture as a whole for another task rather than showing roadmap choices in unrelated conversations.
+Historical 0.2.1 behavior (preserved in `decision-review-legacy.openui`; superseded for new generation by [0.3.0](personal-library.md)): 0.2.1 added `assets/decision-review.openui`: a real first decision about which workflows should shape the personal library. It uses existing components and the shared library without adding dependencies. Checkboxes hold stable IDs as boolean record keys; the comparison filters to selected rows, falling back to all rows when empty. Review focus chooses tradeoffs/scope/risks/order. The Ask action is absent when empty and sends only selected IDs/titles, decision ID, and focus; the normal-composer sharing allowlist is `selectedOptions` and `reviewFocus`. Adapt the fixture as a whole for another task rather than showing roadmap choices in unrelated conversations.
 
 Reproduce its local SDK-host fixture with `node test/make-browser-fixture.mjs /tmp/openui-decision-qa.html decision`. Phone checkbox glyphs retain their native dimensions inside 44px minimum clickable rows; narrative table cells wrap, while narrow tables retain horizontal scrolling. The test host sets light variables before connecting to avoid a premature SDK notification. Live T3 context delivery and two-frame isolation remain user acceptance checks. The full library is retained: this increment makes no prompt/bundle reduction claim.
 
