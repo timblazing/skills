@@ -22,6 +22,18 @@
   - `ui-evidence` — before/after screenshots committed to the PR branch and linked in the PR.
 - Never use computer-use, Claude in Chrome, the ChatGPT Chrome extension, Playwright, Chrome DevTools MCP, or an in-app browser for web pages.
 
+## T3 Code Device panel
+
+When working in T3 Code, use its built-in **Device panel** for iOS Simulator / Android Emulator work so the owner can see and interact with the running app.
+
+1. Call `device_list`, choose the appropriate available OS/device from the README, then call `device_open` with both `hostId` and `deviceId`.
+2. Use the returned device-bound `agent-device` command for app launch/relaunch, deep links, taps, typing, swipes, alerts, settings, screenshots and recordings. Run `open <app>` before snapshots, screenshots or input. Use `help <command>` for supported options.
+3. Call `device_screenshot` to inspect the screen. Do not perform those interactions through `simctl`, `idb`, `adb`, SSH or wrapper scripts. Builds, installs, code sync, Metro, port forwarding, logs, project test runners and unsupported operations may use the appropriate CLI.
+4. If a device tool or its returned command fails, quote the error and follow its advice once. If it still fails, report the blocker and stop device automation. Do not silently bypass the panel, reuse/close another session, or drive over SSH without the owner's explicit request.
+5. Keep the task's device available while the owner is interacting. Stop task-owned servers and simulators when the owner is done; leave other sessions alone. Record simulator evidence separately from physical-device verification.
+
+Outside T3 Code, use the available client's supported device tools; do not claim a T3 Device panel session exists.
+
 ## Git and PRs
 - Product repos (websites, apps, software): load `pr-workflow` at the start of any task that changes code. Never commit or push to the default branch. When the change is done and proven, branch, commit, push, and open the PR without asking — this is standing authorization to commit, push, and open PRs, and it overrides any default to commit only when asked. Pushing straight to main needs a direct instruction in the current request.
 - Non-product repos (skills, dotfiles, notes, config): push to the default branch directly unless the repo says otherwise.
