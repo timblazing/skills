@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { envelope, selectState, actionSelection, contextQueue } from '../handoff.mjs';
+import { envelope, selectState, actionSelection, contextQueue, staleClearGate } from '../handoff.mjs';
 
 test('selection includes only opted-in reactive keys, preserving IDs and empty values', () => {
   assert.deepEqual(selectState({ $ids: ['repo-123'], $empty: '', $secret: 'private', form: {} }, ['ids', 'empty']), { ids: ['repo-123'], empty: '' });
@@ -35,4 +35,15 @@ test('failed context writes do not claim success or retry automatically', async 
   assert.equal(attempts, 1);
   assert.equal(failures, 1);
   assert.equal(confirmations, 0);
+});
+
+test('stale context clears once per completed identity, after both result and connection', () => {
+  const gate = staleClearGate(), ready = { connected: true, interfaceId: 'frame-1', keys: ['selectedOptions'], canUpdate: true };
+  assert.equal(gate({ ...ready, connected: false }), false, 'result before connect waits');
+  assert.equal(gate({ ...ready, interfaceId: undefined }), false, 'partial input has no identity');
+  assert.equal(gate({ ...ready, keys: [] }), false, 'nothing allowlisted, nothing to clear');
+  assert.equal(gate({ ...ready, canUpdate: false }), false);
+  assert.equal(gate(ready), true);
+  assert.equal(gate(ready), false, 'once per identity');
+  assert.equal(gate({ ...ready, interfaceId: 'frame-2' }), true);
 });

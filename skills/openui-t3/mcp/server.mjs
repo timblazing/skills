@@ -21,7 +21,7 @@ export async function createServer() {
   const templates = {};
   for (const [name, file] of Object.entries({ demo: 'mcp-demo', decision: 'decision-review', plan: 'plan-review', snapshot: 'snapshot-review' })) templates[name] = await read(`../assets/${file}.openui`);
   const compactDemo = await read('../assets/compact-demo.openui');
-  const server = new McpServer({ name: 'openui', version: '0.3.0' });
+  const server = new McpServer({ name: 'openui', version: '0.3.1' });
   server.registerTool('get_openui_instructions', {
     description: 'Get the exact OpenUI component signatures and language instructions before generating an interactive interface. Use render_openui to display the program inside T3 Code.',
     inputSchema: z.object({ library: z.enum(['personal', 'legacy']).default('personal') }),

@@ -4,34 +4,12 @@ import { PostMessageTransport } from '@modelcontextprotocol/ext-apps';
 
 const frame = document.getElementById('app');
 const light = new URLSearchParams(location.search).get('theme') === 'light';
-const bridge = new AppBridge(null, { name: 'OpenUI QA host', version: '1.0.0' }, {
-  message: { text: {} }, openLinks: {},
-  ...(new URLSearchParams(location.search).has('no-context') ? {} : { updateModelContext: { text: {} } }),
-}, { hostContext: {
-  theme: new URLSearchParams(location.search).get('theme') === 'light' ? 'light' : 'dark', displayMode: 'inline', availableDisplayModes: ['inline'], platform: 'web',
-  containerDimensions: { width: innerWidth, maxHeight: 2000 },
-  styles: { variables: light ? {
-    '--color-background-primary': '#ffffff', '--color-background-secondary': '#f0f0f0',
-    '--color-background-inverse': '#202020', '--color-text-primary': '#202020',
-    '--color-text-secondary': '#606060', '--color-text-inverse': '#ffffff', '--color-border-primary': '#d0d0d0',
-  } : {
-    '--color-background-primary': '#202024', '--color-background-secondary': '#303036',
-    '--color-background-inverse': '#ededf0', '--color-text-primary': '#ededf0',
-    '--color-text-secondary': '#b6b6bf', '--color-text-inverse': '#161618',
-    '--color-border-primary': '#44444c',
-  } },
-} });
 window.addEventListener('message', event => {
   if (event.source === frame.contentWindow && event.data?.qaDiagnostics) window.qaDiagnostics = event.data.qaDiagnostics;
 });
 window.testMode = 'approve';
+// Host-side context outlives remounts, like T3's per-item model context.
 window.contextUpdates = [];
-bridge.onupdatemodelcontext = async params => {
-  if (window.contextDelay) await new Promise(resolve => setTimeout(resolve, window.contextDelay));
-  window.contextUpdates.push(params);
-  return {};
-};
-window.qaBridge = bridge;
 if (light) {
   document.body.style.background = '#fff';
   document.documentElement.style.background = '#fff';
@@ -39,20 +17,54 @@ if (light) {
 
 window.handoffMessages = [];
 window.handoffRequests = 0;
-bridge.onmessage = async (message) => {
-  window.handoffRequests += 1;
-  if (window.testMode === 'error') throw new Error('Connection lost; delivery unknown.');
-  if (window.testMode === 'decline') throw new Error('Declined by the user.');
-  if (window.testMode === 'delay') await new Promise(resolve => { window.approvePending = resolve; });
-  window.handoffMessages.push(message);
-  return {};
+let bridge;
+function mount() {
+  bridge = new AppBridge(null, { name: 'OpenUI QA host', version: '1.0.0' }, {
+    message: { text: {} }, openLinks: {},
+    ...(new URLSearchParams(location.search).has('no-context') ? {} : { updateModelContext: { text: {} } }),
+  }, { hostContext: {
+    theme: new URLSearchParams(location.search).get('theme') === 'light' ? 'light' : 'dark', displayMode: 'inline', availableDisplayModes: ['inline'], platform: 'web',
+    containerDimensions: { width: innerWidth, maxHeight: 2000 },
+    styles: { variables: light ? {
+      '--color-background-primary': '#ffffff', '--color-background-secondary': '#f0f0f0',
+      '--color-background-inverse': '#202020', '--color-text-primary': '#202020',
+      '--color-text-secondary': '#606060', '--color-text-inverse': '#ffffff', '--color-border-primary': '#d0d0d0',
+    } : {
+      '--color-background-primary': '#202024', '--color-background-secondary': '#303036',
+      '--color-background-inverse': '#ededf0', '--color-text-primary': '#ededf0',
+      '--color-text-secondary': '#b6b6bf', '--color-text-inverse': '#161618',
+      '--color-border-primary': '#44444c',
+    } },
+  } });
+  bridge.onupdatemodelcontext = async params => {
+    if (window.contextDelay) await new Promise(resolve => setTimeout(resolve, window.contextDelay));
+    if (window.contextFail) throw new Error('Context update failed.');
+    window.contextUpdates.push(params);
+    return {};
+  };
+  bridge.onmessage = async (message) => {
+    window.handoffRequests += 1;
+    if (window.testMode === 'error') throw new Error('Connection lost; delivery unknown.');
+    if (window.testMode === 'decline') throw new Error('Declined by the user.');
+    if (window.testMode === 'delay') await new Promise(resolve => { window.approvePending = resolve; });
+    window.handoffMessages.push(message);
+    return {};
+  };
+  bridge.oninitialized = async () => {
+    await bridge.sendToolInput({ arguments: window.fixtureResult.structuredContent });
+    await bridge.sendToolResult(window.fixtureResult);
+    window.hostReady = true;
+  };
+  bridge.onsizechange = ({ height }) => { if (height) frame.style.height = `${height}px`; };
+  window.qaBridge = bridge;
+  return bridge.connect(new PostMessageTransport(frame.contentWindow, frame.contentWindow)).then(() => {
+    frame.srcdoc = window.fixtureHtml;
+  });
+}
+// Abrupt remount: no teardown request, so any earlier shared context is left behind.
+window.remount = async () => {
+  window.hostReady = false;
+  await bridge.close();
+  await mount();
 };
-bridge.oninitialized = async () => {
-  await bridge.sendToolInput({ arguments: window.fixtureResult.structuredContent });
-  await bridge.sendToolResult(window.fixtureResult);
-  window.hostReady = true;
-};
-bridge.onsizechange = ({ height }) => { if (height) frame.style.height = `${height}px`; };
-bridge.connect(new PostMessageTransport(frame.contentWindow, frame.contentWindow)).then(() => {
-  frame.srcdoc = window.fixtureHtml;
-}).catch(error => { console.error(error); });
+mount().catch(error => { console.error(error); });

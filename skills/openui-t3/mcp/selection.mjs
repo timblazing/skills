@@ -9,7 +9,16 @@ export function validateItems(items) {
   return null;
 }
 export const selectedItems = (items, selection) => items.filter(row => Object.hasOwn(selection ?? {}, row.id) && selection[row.id] === true);
+// Emit only true entries: deselecting deletes the key instead of storing false.
+export function toggleSelection(selection, id) {
+  const next = Object.fromEntries(Object.entries(selection ?? {}).filter(([, value]) => value === true));
+  if (next[id]) delete next[id]; else next[id] = true;
+  return next;
+}
+// Search only text the user can see; field names and stable IDs never match.
+const searchable = row => [row.title, row.status, row.details, ...Object.values(row.criteria ?? {}), row.recommendation ?? ''].join('\n').toLowerCase();
 export function visibleItems(items, query = '', status = '', sort = 'source') {
-  const result = items.filter(row => (!status || row.status === status) && JSON.stringify(row).toLowerCase().includes(query.toLowerCase()));
+  const needle = query.trim().toLowerCase();
+  const result = items.filter(row => (!status || row.status === status) && (!needle || searchable(row).includes(needle)));
   return sort === 'source' ? result : result.sort((a, b) => String(a[sort]).localeCompare(String(b[sort])));
 }

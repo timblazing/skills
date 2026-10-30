@@ -43,21 +43,28 @@ html, body { margin: 0; padding: 0; background: transparent; color: var(--openui
 #root .openui-checkbox-item-description { margin: 4px 0 0; }
 #root .openui-table-cell { white-space: normal; min-width: 140px; vertical-align: top; }
 #root[aria-busy="true"] { opacity: .65; }
-#sharing { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--openui-border-default); }
+/* Host chrome shares the card's content edge (personal sets --openui-edge; legacy stays flush). */
+#sharing, #status, #error { margin-left: var(--openui-edge, 0); margin-right: var(--openui-edge, 0); }
+#sharing { display: flex; flex-wrap: wrap; align-items: center; column-gap: 12px; margin-top: var(--openui-chrome-gap, 16px); margin-bottom: var(--openui-edge, 0); padding-top: 12px; border-top: 1px solid var(--openui-border-default); }
+#sharing details { flex-basis: 100%; }
 #sharing button { min-height: 36px; padding: 6px 12px; border: 1px solid var(--openui-border-interactive); border-radius: 6px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
-#sharing button:hover { background: var(--openui-highlight); }
+#sharing button:hover:not(:disabled) { background: var(--openui-highlight); }
 button:disabled { opacity: .5; cursor: default !important; }
 button:focus-visible, summary:focus-visible { outline: 2px solid var(--color-ring-primary, var(--ring, currentColor)); outline-offset: 3px; }
 #sharing-status, #sharing summary { font-size: 13px; color: var(--openui-text-neutral-secondary); }
-#sharing-status { margin: 8px 0; }
+#sharing-status { margin: 8px 0; flex: 1 1 240px; }
+#sharing summary { padding: 4px 0; }
 #sharing summary { cursor: pointer; }
 #selection-preview { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; max-height: 220px; overflow: auto; }
 @media (max-width: 480px) {
   #root button:not([role="checkbox"]):not([role="radio"]), #root input:not([type="checkbox"]):not([type="radio"]), #sharing button { min-height: 44px; }
   #root .openui-checkbox-item-container { min-height: 44px; }
+  #sharing button { width: 100%; }
+  #sharing summary { min-height: 44px; display: flex; align-items: center; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
-#status, #error { margin: 12px 0 0; font-size: 13px; }
+#status, #error { margin-top: var(--openui-chrome-gap, 12px); margin-bottom: 12px; font-size: 13px; }
+#status:empty { display: none; }
 #status { color: var(--color-text-secondary, var(--muted-foreground, #b6b6bf)); }
 #error { color: var(--color-text-danger, var(--destructive, #ff8888)); white-space: pre-wrap; }
 .openui-card { background: transparent !important; border: 0 !important; padding: 0 !important; box-shadow: none !important; }
@@ -65,13 +72,13 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--color-rin
 </head>
 <body>
 <div id="root" data-ui><p>Connecting OpenUI to the conversation…</p></div>
+<p id="status" role="status" aria-live="polite"></p>
+<p id="error" role="alert" hidden></p>
 <section id="sharing" aria-label="Selection context">
 <button id="share" type="button" aria-pressed="false" disabled>Share selection</button>
 <p id="sharing-status" role="status" aria-live="polite">Sharing is off.</p>
 <details><summary>Selection details</summary><pre id="selection-preview"></pre></details>
 </section>
-<p id="status" role="status" aria-live="polite"></p>
-<p id="error" role="alert" hidden></p>
 <script>/* OPENUI_APP */</script>
 </body>
 </html>

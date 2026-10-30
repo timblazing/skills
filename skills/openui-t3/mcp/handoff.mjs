@@ -37,3 +37,14 @@ export function contextQueue(send) {
     return draining;
   };
 }
+
+// A remounted frame starts at its defaults, so clear any context an earlier mount shared.
+// Fires once per completed-result identity, whichever of result/connect arrives last.
+export function staleClearGate() {
+  let cleared;
+  return ({ connected, interfaceId, keys, canUpdate }) => {
+    if (!connected || !interfaceId || !keys?.length || !canUpdate || cleared === interfaceId) return false;
+    cleared = interfaceId;
+    return true;
+  };
+}

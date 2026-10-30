@@ -3,9 +3,9 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Renderer } from '@openuidev/react-lang';
 import { library, libraryId } from './library.mjs';
-import { envelope, selectState, actionSelection, contextQueue } from './handoff.mjs';
+import { envelope, selectState, actionSelection, contextQueue, staleClearGate } from './handoff.mjs';
 
-const app = new App({ name: 'OpenUI for T3', version: '0.3.0' }, {});
+const app = new App({ name: 'OpenUI for T3', version: '0.3.1' }, {});
 const view = document.getElementById('root');
 const root = createRoot(view);
 const status = document.getElementById('status');
@@ -13,12 +13,21 @@ const error = document.getElementById('error');
 const share = document.getElementById('share');
 const sharingStatus = document.getElementById('sharing-status');
 const preview = document.getElementById('selection-preview');
-let pending = false, connected = false, sharing = false, timer, disposed = false;
-let identity = crypto.randomUUID(), title = 'OpenUI interface', keys = [], currentCode;
+let pending = false, connected = false, sharing = false, timer, disposed = false, clearFailed = false;
+let identity = crypto.randomUUID(), resultIdentity, title = 'OpenUI interface', keys = [], currentCode;
 window.openuiDiagnostics = { errors: [], parse: null, state: {}, actions: [] };
 window.openuiLibraryPrompt = library.prompt({ bindings: true, builtinFunctions: true });
 const fail = message => { error.hidden = false; error.textContent = String(message); };
 const queueContext = contextQueue(text => app.updateModelContext({ content: [{ type: 'text', text }] }, { timeout: 10_000 }));
+const staleClear = staleClearGate();
+const canUpdate = () => !!app.getHostCapabilities()?.updateModelContext;
+const SHARED = 'Selection shared with T3; changes update it.';
+function idleText() {
+  if (!canUpdate()) return 'Selection sharing is unavailable in this host.';
+  // Stays visible until a later context write succeeds; a re-render must not hide it.
+  if (clearFailed) return 'Could not clear an earlier shared selection. It may still be in context.';
+  return keys.length ? 'Sharing is off. Share to include this selection with your T3 messages.' : 'This interface has no shareable selection.';
+}
 function selected() { return selectState(window.openuiDiagnostics.state, keys); }
 function currentEnvelope() { return envelope(identity, title, selected(), libraryId); }
 function updatePreview() {
@@ -31,11 +40,12 @@ function publish() {
   try {
     const wasSharing = sharing;
     const text = sharing ? JSON.stringify(currentEnvelope()) : JSON.stringify(envelope(identity, title, {}, libraryId));
-    sharingStatus.textContent = sharing ? 'Updating selection…' : 'Clearing shared selection…';
+    sharingStatus.textContent = sharing ? 'Updating shared selection…' : 'Clearing shared selection…';
     queueContext(text, () => {
       const latest = sharing ? JSON.stringify(currentEnvelope()) : JSON.stringify(envelope(identity, title, {}, libraryId));
+      clearFailed = false;
       if (sharing !== wasSharing || text !== latest) return;
-      sharingStatus.textContent = sharing ? 'Selection available to your next message.' : 'Selection cleared. Sharing is off.';
+      sharingStatus.textContent = sharing ? SHARED : 'Sharing is off. Shared selection cleared.';
     }, cause => {
       sharingStatus.textContent = 'Sharing could not be confirmed. Check before using this selection.';
       fail(cause.message);
@@ -46,10 +56,24 @@ function publish() {
     share.textContent = 'Share selection';
     share.setAttribute('aria-pressed', 'false');
     queueContext(JSON.stringify(envelope(identity, title, {}, libraryId)), () => {
-      sharingStatus.textContent = 'Selection cleared. Sharing is off.';
+      sharingStatus.textContent = 'Sharing is off. Shared selection cleared.';
     }, () => { sharingStatus.textContent = 'Could not clear the previous selection.'; });
     fail(cause.message);
   }
+}
+// Runs after both the completed tool result and the connection; the queue orders it before any later share.
+function clearStale() {
+  if (disposed || !staleClear({ connected, interfaceId: resultIdentity, keys, canUpdate: canUpdate() })) return;
+  if (sharing) { publish(); return; }
+  sharingStatus.textContent = 'Clearing any earlier shared selection…';
+  queueContext(JSON.stringify(envelope(identity, title, {}, libraryId)), () => {
+    if (!sharing) sharingStatus.textContent = idleText();
+  }, cause => {
+    if (sharing) return;
+    clearFailed = true;
+    sharingStatus.textContent = idleText();
+    fail(cause.message);
+  });
 }
 share.addEventListener('click', () => {
   sharing = !sharing;
@@ -97,7 +121,7 @@ async function onAction(event) {
     pending = false;
     view.inert = false;
     view.setAttribute('aria-busy', 'false');
-    share.disabled = !connected || !keys.length || !app.getHostCapabilities()?.updateModelContext;
+    share.disabled = !connected || !keys.length || !canUpdate();
   }
 }
 function render(args, isStreaming = false) {
@@ -107,10 +131,8 @@ function render(args, isStreaming = false) {
   if (args.interfaceId) identity = args.interfaceId;
   if (typeof args.title === 'string') { title = args.title; document.title = title; }
   keys = args.selectionKeys ?? [];
-  share.disabled = pending || !connected || !keys.length || !app.getHostCapabilities()?.updateModelContext;
-  if (!sharing && connected) sharingStatus.textContent = !app.getHostCapabilities()?.updateModelContext
-    ? 'Selection sharing is unavailable in this host.'
-    : keys.length ? 'Sharing is off. Only listed values will be attached.' : 'This interface has no shareable selection.';
+  share.disabled = pending || !connected || !keys.length || !canUpdate();
+  if (!sharing && connected) sharingStatus.textContent = idleText();
   if (currentCode && currentCode !== args.code) {
     window.openuiDiagnostics.state = {};
     if (sharing) { sharing = false; publish(); share.textContent = 'Share selection'; share.setAttribute('aria-pressed', 'false'); }
@@ -143,13 +165,15 @@ app.ontoolinputpartial = ({ arguments: args }) => render(args, true);
 app.ontoolinput = ({ arguments: args }) => render(args);
 app.ontoolresult = result => {
   if (result.isError) { fail('OpenUI rejected this program. Ask the agent to correct it.'); return; }
+  if (result.structuredContent?.interfaceId) resultIdentity = result.structuredContent.interfaceId;
   render(result.structuredContent);
+  clearStale();
 };
 app.onhostcontextchanged = applyContext;
 app.onteardown = async () => {
   clearTimeout(timer);
   sharing = false;
-  if (connected && app.getHostCapabilities()?.updateModelContext) await queueContext(JSON.stringify(envelope(identity, title, {}, libraryId)));
+  if (connected && canUpdate()) await queueContext(JSON.stringify(envelope(identity, title, {}, libraryId)));
   disposed = true;
   root.unmount();
   return {};
@@ -165,8 +189,9 @@ status.textContent = 'Connecting to T3…';
 app.connect().then(() => {
   connected = true;
   applyContext(app.getHostContext());
-  status.textContent = app.getHostCapabilities()?.message ? 'Connected to T3.' : 'Connected. Agent messages unavailable in this host.';
-  share.disabled = !keys.length || !app.getHostCapabilities()?.updateModelContext;
-  sharingStatus.textContent = !app.getHostCapabilities()?.updateModelContext
-    ? 'Selection sharing is unavailable in this host.' : 'Sharing is off. Only listed values will be attached.';
+  // Success stays quiet; only a limitation needs words.
+  status.textContent = app.getHostCapabilities()?.message ? '' : 'Agent messages are unavailable in this host.';
+  share.disabled = !keys.length || !canUpdate();
+  sharingStatus.textContent = idleText();
+  clearStale();
 }).catch(cause => { status.textContent = 'Connection unavailable.'; fail(`Unable to connect to the host: ${cause.message}`); });
