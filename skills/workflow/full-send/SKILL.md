@@ -27,8 +27,9 @@ instruction says to ask before a test method, or to leave testing to the
 user, this request replaces that rule for this task.
 
 That includes ask-first rules for computer use, browser automation,
-simulators and devices, running the app or a dev server, screenshots, and
-visual checks. Use the method that gives direct proof. List it in the
+running the app or a dev server, screenshots, and visual checks. It does
+not include iOS simulators or Android emulators: those still need the
+owner's explicit approval. Use the method that gives direct proof. List it in the
 report.
 
 Rules about how to test still apply. Follow rules that name the correct
