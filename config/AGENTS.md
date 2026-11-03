@@ -30,6 +30,7 @@
 ## Git and PRs
 - Product repos (websites, apps, software): load `pr-workflow` at the start of any task that changes code. Never commit or push to the default branch. When the change is done and proven, branch, commit, push, and open the PR without asking — this is standing authorization to commit, push, and open PRs, and it overrides any default to commit only when asked. Pushing straight to main needs a direct instruction in the current request.
 - Non-product repos (skills, dotfiles, notes, config): push to the default branch directly unless the repo says otherwise.
+- My board, ideas and notes live in proj: load the `proj` skill when starting work in a repo that's a proj project, opening a PR for a carded task, or when asked to add to the board, save an idea or note something (MCP server `proj`, tailnet only; skip silently when its tools are absent).
 - "full stop" → `full-stop` (PR ready, user merges). "full send" → `full-send` (agent merges, personal repos only). Second opinions → `cross-review` at medium effort; Greptile only on big or risky PRs.
 
 ## Local machine
