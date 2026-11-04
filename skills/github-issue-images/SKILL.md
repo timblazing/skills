@@ -1,11 +1,13 @@
 ---
 name: github-issue-images
-description: Put screenshots and images into GitHub issues, issue comments and PR comments from the terminal, where `gh` can't upload attachments. Uploads them to the repo's `issue-assets` branch and embeds commit-pinned links that render in private repos. Use whenever you create or comment on an issue and the user attached or pointed at images (T3 Code attachments, screenshots, mockups, reference designs), or when asked to "add the screenshot to the issue".
+description: Put screenshots and images into GitHub issues, issue comments and PR comments from the terminal, where `gh` can't upload attachments. Uploads them to a hidden git ref in the repo (not a branch) and embeds commit-pinned links that render in private repos. Use whenever you create or comment on an issue and the user attached or pointed at images (T3 Code attachments, screenshots, mockups, reference designs), or when asked to "add the screenshot to the issue".
 ---
 
 # Images in GitHub issues
 
-GitHub has no API for the `user-attachments` uploads the web editor makes, and `gh` and the Composio GitHub tools can't do it either. Instead, commit the image to an orphan `issue-assets` branch in the same repo and embed a link pinned to that commit. It renders for anyone with repo access, private repos included, and agents can fetch the actual file.
+GitHub has no API for the `user-attachments` uploads the web editor makes, and `gh` and the Composio GitHub tools can't do it either. Instead, commit the image to `refs/assets/issue-images` in the same repo and embed a link pinned to that commit. That ref is outside `refs/heads`, so it isn't a branch: no "recent pushes" banner, nothing in the branch list or clones, no CI or deploys, and nothing on `main`. It still keeps the commits alive, the link renders for anyone with repo access (private repos included), and agents can fetch the actual file.
+
+Don't put images on a branch or commit them to `main` (in product repos that deploys).
 
 Never upload to public hosts (imgur, 0x0.st, gists, public R2). Screenshots of private projects stay in the private repo.
 
@@ -25,7 +27,7 @@ $UP -R owner/repo -d issue-76 -c "Reference: pill count badges" /path/to/ref.png
 - Creating a new issue: upload first (the default folder is a dated random slug), then put the tags in the `gh issue create` body.
 - Commenting on an existing issue: use `-d issue-<n>` (or `pr-<n>`).
 - One `-c` caption applies to every file in the call. Upload separately when captions differ.
-- The first upload to a repo creates the `issue-assets` branch. It holds images only and never merges into anything.
+- The first upload to a repo creates the ref. Never delete it: every embedded image points at its commits.
 
 ## 3. Embed with context
 
@@ -43,4 +45,4 @@ Say plainly whether an image is the target design, the current broken state, or 
 
 ## For agents working on the issue
 
-The `?raw=true` links need repo access. With a checkout: `git fetch origin issue-assets && git show origin/issue-assets:issue-76/ref.png > ref.png`. Without one: `gh api repos/owner/repo/contents/issue-76/ref.png?ref=issue-assets -H "Accept: application/vnd.github.raw" > ref.png`. Then look at the file.
+The `?raw=true` links need repo access. Take the commit SHA and path from the link (`…/blob/<sha>/<path>?raw=true`). Without a checkout: `gh api "repos/owner/repo/contents/<path>?ref=<sha>" -H "Accept: application/vnd.github.raw" > ref.png`. With one: `git fetch origin refs/assets/issue-images && git show FETCH_HEAD:<path> > ref.png`. Then look at the file.
