@@ -42,6 +42,7 @@
 ## External apps
 - Composio CLI is the gateway for external services: `composio search "<task>"` → `composio execute <slug>`; missing connection → `composio link <toolkit>`. Details: `composio-cli` skill.
 - Use `gh` for git/GitHub work on the current repo (PRs, issues, checks).
+- When an issue, issue comment or PR comment should include images (chat attachments, screenshots, reference designs), load `github-issue-images`: `gh` can't upload attachments, so it commits them to the repo's `issue-assets` branch and embeds the links.
 - Confirm before any write to an external service (sending, posting, deleting, inviting).
 
 When interacting with Cloudflare, use the cf CLI unless the project has a Wrangler configuration file.
