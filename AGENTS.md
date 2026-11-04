@@ -1,0 +1,37 @@
+## Cloud agents
+
+For Claude (GitHub Actions, `@claude`) and Codex (Codex Cloud, `@codex`) working on this repo in the cloud.
+
+- Skills come from [timblazing/skills](https://github.com/timblazing/skills). The Claude workflow installs them before each run, and so does the Codex Cloud environment's setup script. Use `pr-workflow` to land changes and `leaving-pr-comments` for anything you post on GitHub.
+- Never push to `main`. Work on a branch and open a pull request.
+- Verify with this repo's build and test commands (see the README) before you push.
+- Do not update local session logs or work logs (for example `docs/WORKLOG.md`); put remaining work in the PR description.
+- The shared instructions installed with the skills are written for a local Mac. In the cloud, skip the local-only rules: browser work through `agent-browser` (and the `ui-check`, `ui-qa`, `ui-evidence` skills), iOS simulators and Android emulators, the Docker/VM rules and T3 Code tools. Say in the PR what still needs checking by hand.
+- Composio tools (`mcp__composio__*`, external apps such as Gmail, Slack or Notion) are there only when the repo has the `COMPOSIO_CONSUMER_API_KEY` secret. Read freely; write to an external app (send, post, create, delete) only when the task asks for that write.
+
+## Code Review Rules
+
+For `@codex review` and any other code review of this repo.
+
+- Focus on correctness, security and regressions: bugs, unhandled edge cases, data loss, leaked secrets, missing auth or validation, and behavior that changed without the PR saying so.
+- Skip style nits, formatting and naming preferences unless they hide a bug.
+- Point at the exact line, say what breaks and when, and suggest a fix. Say so when nothing needs changing.
+
+## Docs
+
+Project documentation is markdown in `docs/`, and proj's Docs tab shows it. Keep it in this layout:
+
+```
+docs/
+  README.md          index: what the project is, and links to everything below
+  architecture.md    how it fits together (an architecture/ folder when it gets large)
+  decisions/         ADRs, one per decision: NNNN-short-title.md
+  guides/            how-tos: setup, deploy, release
+  runbooks/          ops: what to do when X breaks
+  reference/         APIs, config, data model
+```
+
+- When you change behavior, config, an API or the deploy process, update the doc that describes it in the same PR. Don't leave docs describing the old behavior.
+- Record a significant decision as a new ADR in `docs/decisions/` (next number, short title, with Context, Decision and Consequences headings).
+- Start every doc with a single `# Title` heading, and use relative links between docs. Keep `docs/README.md` linking to everything else.
+- If the existing docs are somewhere else or laid out differently, don't reshuffle them as a side effect of other work; move them in a PR of their own.
