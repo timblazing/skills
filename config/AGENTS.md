@@ -37,6 +37,7 @@
 - Never start Docker, Colima, Podman, OrbStack, Lima, or any other local VM or container runtime on this Mac. They use too many resources.
 - When asked to run something "isolated" or "not on my machine", use a remote sandbox (for example a Cloudflare Sandbox) or a throwaway scratch directory with its own npm cache. If neither fits, ask before choosing.
 - Stop any server or background process you started once the user is done with it.
+- Clean up when work is merged or abandoned: delete merged branches (remote and local), remove worktrees you or subagents created, close browser sessions, and delete scratch files. Details: `pr-workflow` "Cleaning up".
 
 ## External apps
 - Composio CLI is the gateway for external services: `composio search "<task>"` → `composio execute <slug>`; missing connection → `composio link <toolkit>`. Details: `composio-cli` skill.

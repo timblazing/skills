@@ -92,6 +92,37 @@ automatically, so a PR shows a green tick or a red X.
 
 - Squash merge unless the repo's history shows otherwise.
 - Delete the remote branch after merge (`gh pr merge --squash --delete-branch`).
-  In a T3 worktree, `gh` cannot delete the local branch while the worktree
-  uses it; that is fine, T3 removes merged worktrees itself.
+  Repos have "Automatically delete head branches" on; turn it on for any new
+  repo (`gh api -X PATCH repos/OWNER/REPO -F delete_branch_on_merge=true`).
+- Stacked PRs: after a base squash-merges, rebase the next PR onto the default
+  branch (`git rebase --onto origin/main <old base head>`), retarget it with
+  `gh pr edit N --base main`, and wait for its checks before merging it.
 - Never `--admin` or bypass branch protection.
+
+## Cleaning up
+
+Leave nothing behind once work is merged or abandoned. Do this before the
+final report, in the same turn:
+
+- **Branches:** delete the remote branch of every merged PR (including PRs
+  from delegated agents) and the matching local branches
+  (`git fetch --prune`, then `git branch -D`). Never delete a branch that has
+  an open PR or commits that never landed.
+- **Worktrees:** `git worktree remove` every worktree you or your subagents
+  created (delegated `isolation: "worktree"` children, scratch checkouts for
+  rebases or QA), then `git worktree prune`. T3 does not remove them on merge.
+  Check `git status` first; never remove one with uncommitted work.
+- **Your own T3 worktree** can't be removed while the thread uses it: detach it
+  (`git checkout --detach origin/main`) and delete its branch, so archiving the
+  thread leaves nothing behind. Fast-forward the main checkout's default
+  branch (`git -C <main checkout> pull --ff-only`).
+- **Processes and sessions:** stop dev/prod servers and background watchers
+  you started, and close `agent-browser` sessions.
+- **Temp files:** delete scratch copies (database snapshots, `.env.bak`
+  backups you made, build output in scratch dirs). Never delete the user's
+  own files or backups you didn't create.
+- **Board:** move the task's proj card to Done (`proj` skill) and add any
+  leftover follow-ups as Backlog cards instead of TODOs.
+
+End the report with one line on what was cleaned up and anything left on
+purpose (and why).

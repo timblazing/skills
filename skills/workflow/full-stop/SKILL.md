@@ -44,5 +44,9 @@ without the user. If someone else merged it, report that instead.
   needed. Follow full-send's rules for asking the user.
 
 In T3 Code, call `unwatch_pull_request` before the handoff or a question.
+Before the handoff, clean up as in `pr-workflow` ("Cleaning up"), except the
+PR's own branch and worktree, which stay until the user merges. GitHub deletes
+the remote branch on merge; if the user later asks you to wrap up, remove the
+worktree and local branch then.
 Report the PR link, final head, verdict, proof, reviewer outcome, and remaining
 risks. State whether the PR is still open and unmerged.

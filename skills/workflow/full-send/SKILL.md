@@ -62,10 +62,12 @@ one appears.
    with Greptile installed, comment `@greptileai` once to request a review;
    otherwise do not spend Greptile credits.
 6. **Merge** when the merge gate passes.
-7. **Report** in your final message: the PR link, the merge commit, your proof,
-   and each decision you made for the user.
+7. **Clean up** as in `pr-workflow` ("Cleaning up"): branches, worktrees,
+   servers, browser sessions and scratch files from this task.
+8. **Report** in your final message: the PR link, the merge commit, your proof,
+   each decision you made for the user, and what you cleaned up.
 
-Stay active from step 1 to step 7. If you end your turn while checks or bots are
+Stay active from step 1 to step 8. If you end your turn while checks or bots are
 pending, the work stops, because nobody will prompt you again. Wait with the
 watcher from `babysit-pr`, so something wakes you when the PR changes. In T3
 Code that is `watch_pull_request`. If you stop before the merge, call
