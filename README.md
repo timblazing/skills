@@ -20,7 +20,7 @@ the agents discover them.
 | [open-pencil](skills/open-pencil) | Inspect, edit and export `.fig` files via OpenPencil | [open-pencil/open-pencil](https://github.com/open-pencil/open-pencil) (MIT) |
 | [openui](skills/openui) | Official OpenUI generative UI, language, components, and agent integration guidance | [thesysdev/skills](https://github.com/thesysdev/skills), revision `bcd93adc9185e333bc9a83b29f7d81d67ab1935f` (complete skill directory) |
 | [openui-t3](skills/openui-t3) | In-chat OpenUI interfaces: Codex MCP App with approved agent handoff, plus HTML fallback | mine; official OpenUI React runtime and MCP Apps SDK |
-| [proj](skills/proj) | Keep my proj board, ideas and notes in step with the work (proj MCP, tailnet only) | mine |
+| [proj](skills/proj) | Read proj (read-only MCP, tailnet only) and file follow-ups as GitHub issues | mine |
 | [pick-ui-library](skills/pick-ui-library) | Curated library picks for frontend tasks (manual invoke only) | [emilkowalski/skills](https://github.com/emilkowalski/skills) (MIT) |
 | [scan-to-threejs](skills/scan-to-threejs) | Rebuild editable Three.js rooms from scans and photo references | [wesbos/3d-model-anything](https://github.com/wesbos/3d-model-anything/tree/main/.agents/skills/scan-to-threejs) |
 | [ui-check](skills/ui-check) | Headless screenshots to visually check UI | mine |
@@ -43,6 +43,7 @@ rounds, review skipped for small changes, Greptile only on big PRs.
 | [full-stop](skills/workflow/full-stop) | "full stop" | Same, but stops with the PR ready for you to merge | tstack, edited |
 | [file-pr](skills/workflow/file-pr) | "file a PR" | Short PR that leads with the problem | tstack, edited |
 | [babysit-pr](skills/workflow/babysit-pr) | "babysit" | Watch CI and review bots, fix real findings | tstack, edited |
+| [github](skills/workflow/github) | "github", issue or PR number | `gh` mechanics: issues, issue to PR, review, CI, auth; routes to references | [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) `github` skill (MIT, see `LICENSE-hermes`; commit `95fc3e6`), edited |
 | [leaving-pr-comments](skills/workflow/leaving-pr-comments) | (automatic) | Attribution format for agent-posted comments | tstack |
 | [modernize](skills/workflow/modernize) | "modernize" | Rebase an old PR and decide if it should still exist | tstack |
 | [takeover](skills/workflow/takeover) | "take over" | Finish someone else's PR, branch, or thread | tstack |

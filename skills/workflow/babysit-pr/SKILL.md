@@ -6,7 +6,25 @@ description: Monitor a pull request through review and CI. Use when the user ask
 # Babysit PR
 
 Many repos have AI review bots. They're helpful, even if they are not always
-right.
+right. For `gh` commands (reading checks, replying to review threads, REST
+fallbacks), see the `github` skill.
+
+## Handing over
+
+Hand the PR to the user only when all of these hold on the latest head:
+
+- every required check is green (or the repo has no checks and your local
+  checks passed);
+- every review bot that reviews this repo on its own, or that was requested
+  on this PR, has reviewed the latest head;
+- no unresolved review threads: each finding is fixed, or answered with a
+  written reason and resolved;
+- the body still matches the `file-pr` contract (`Agent:` and `Risk:` lines
+  first; update `Risk:` if a fix touched a protected path).
+
+Until then, loop: fix, prove, push, wait. After 3 fix pushes without
+agreement, stop and ask the user. Bots that are advisory (CodeRabbit) never
+block the handover.
 
 ## Waiting
 

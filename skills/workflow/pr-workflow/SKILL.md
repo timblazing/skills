@@ -27,6 +27,10 @@ default branch, create `<type>/<short-slug>` (e.g. `fix/cart-total-rounding`).
 A T3 worktree is not a dirty checkout to work around: commit, push, and open
 the PR from it. Commit messages follow the repo's history.
 
+`gh` mechanics (issues, PRs, checks, reviews, CI, auth) live in the `github`
+skill. Every PR body follows the `file-pr` contract (`Agent:` and `Risk:`
+lines first).
+
 ## Tiers
 
 This skill is standing authorization to branch, commit, push, and open a PR in
@@ -121,8 +125,8 @@ final report, in the same turn:
 - **Temp files:** delete scratch copies (database snapshots, `.env.bak`
   backups you made, build output in scratch dirs). Never delete the user's
   own files or backups you didn't create.
-- **Board:** move the task's proj card to Done (`proj` skill) and add any
-  leftover follow-ups as Backlog cards instead of TODOs.
+- **Follow-ups:** the PR's `Closes #N` closes the task's issue on merge.
+  Open leftover follow-ups as GitHub issues (`proj` skill) instead of TODOs.
 
 End the report with one line on what was cleaned up and anything left on
 purpose (and why).
