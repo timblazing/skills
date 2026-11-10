@@ -44,7 +44,11 @@ One-off notes with no repeat and no cheap fix: drop them.
 
 ## 3. Fix
 
-- **timblazing/skills**: commit and push to main.
+- **timblazing/skills**: in a scheduled (unattended) run, open a PR from a
+  fresh clone or worktree, never from the installed skills checkout
+  (`~/.local/share/agent-skills` on anton), and leave the merge to the owner
+  ([ADR 0015](https://github.com/timblazing/proj/blob/main/docs/decisions/0015-software-factory-hub.md)).
+  When the user runs the retro with you, commit and push to main.
 - **A product repo's** `verify` skill, AGENTS.md or checks: a PR via `build`.
 - Anything bigger than an edit: an issue (`proj`), `agent-ready` when the
   fix is clear.
@@ -53,4 +57,4 @@ One-off notes with no repeat and no cheap fix: drop them.
 
 One list, worst first: the cause, the PRs it showed up in, the fix and where
 it landed (commit, PR or issue link). In a scheduled run, post it as a
-comment on the retro tracking issue, if there is one.
+comment on the pinned "Factory retro log" issue in timblazing/proj.
