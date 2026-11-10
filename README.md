@@ -23,6 +23,7 @@ the agents discover them.
 | [proj](skills/proj) | Read proj (read-only MCP, tailnet only) and file follow-ups as GitHub issues | mine |
 | [pick-ui-library](skills/pick-ui-library) | Curated library picks for frontend tasks (manual invoke only) | [emilkowalski/skills](https://github.com/emilkowalski/skills) (MIT) |
 | [scan-to-threejs](skills/scan-to-threejs) | Rebuild editable Three.js rooms from scans and photo references | [wesbos/3d-model-anything](https://github.com/wesbos/3d-model-anything/tree/main/.agents/skills/scan-to-threejs) |
+| [security-audit](skills/security-audit) | Source-first security review and full codebase audits with validated findings | [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill), revision `c1c8a8c1471069fb0e188eeaff69b8e8db6564a8` (MIT, see LICENSE) |
 | [ui-check](skills/ui-check) | Headless screenshots to visually check UI | mine |
 | [ui-qa](skills/ui-qa) | Functional browser testing: flows, forms, console errors | mine |
 | [ui-evidence](skills/ui-evidence) | Before/after screenshots committed to a PR | mine |
