@@ -1,6 +1,6 @@
 ---
 name: clarify
-description: "Called by build and backlog when a request or issue is missing a decision only the user can make (behaviour, scope, UX, a trade-off). Interviews the user in rounds of numbered questions with recommended answers, and records hard-to-reverse decisions as ADRs. Also use when the user says grill me or wants a plan stress-tested."
+description: "Called by build and triage when a request or issue is missing a decision only the user can make (behaviour, scope, UX, a trade-off). Interviews the user in rounds of numbered questions with recommended answers, and records hard-to-reverse decisions as ADRs. Also use when the user says grill me or wants a plan stress-tested."
 user-invocable: false
 ---
 
@@ -59,5 +59,5 @@ Done when the frontier is empty and the user has confirmed the summary.
 
 Summarise the settled decisions in a few bullets. When called from `build`,
 continue to its Build phase (or `plan` if the answers made the work bigger
-than one PR). When called from `backlog`, update the issue with the
+than one PR). When called from `triage`, update the issue with the
 decisions and let `triage` relabel it.

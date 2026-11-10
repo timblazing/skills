@@ -1,6 +1,6 @@
 ---
 name: plan
-description: "Called by build and backlog when work is bigger than one PR: break it into tracer-bullet GitHub sub-issues with blocking links, and decide whether they go straight to agent-ready or wait for the user's approval. Also use when the user asks to break something down, split it up or turn a discussion into issues."
+description: "Called by build and triage when work is bigger than one PR: break it into tracer-bullet GitHub sub-issues with blocking links, and decide whether they go straight to agent-ready or wait for the user's approval. Also use when the user asks to break something down, split it up or turn a discussion into issues."
 user-invocable: false
 ---
 
