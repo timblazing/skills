@@ -1,9 +1,56 @@
 ---
-name: pr-workflow
-description: "How to land changes in product repos (websites, apps, software): branch and PR instead of pushing to main, which tier to use (default / full-stop / full-send), how to fix bugs, when to spend Greptile credits, and how to add free CI. Use at the start of any task that changes code in a product repo (not only when committing), when fixing a bug, or when asked to set up CI or review bots. Opening the PR is part of finishing the task: do it without asking."
+name: build
+description: "The factory loop for any task that changes code: understand, build, prove, review, ship. Load it at the start of every code change (fix, feature, refactor, issue to PR), not only when committing. It calls the child skills itself: clarify for fuzzy asks, plan for work bigger than one PR, diagnose for bugs, tdd for new logic, then verify, review and file the PR. Also covers branch policy, tiers (default / full-stop / full-send), Greptile, CI and cleanup."
 ---
 
-# PR workflow
+# Build
+
+The one entry point for changing code. Walk the phases in order. Each phase
+names the child skill to call with the Skill tool; call it yourself, the user
+never types these. A phase that doesn't apply is skipped silently.
+
+## Phases
+
+**1. Understand.** Read the issue and its comments (`github`), or the request.
+Then decide which case you're in:
+
+- *Clear and fits one PR*: go to Build.
+- *Fuzzy*: a decision only the user can make is missing (behaviour, scope,
+  UX, a trade-off). Call `clarify`. A missing *fact* is yours to look up.
+- *Bigger than one PR*: call `plan`. It files sub-issues and decides whether
+  the user must approve them first. Then build the first unblocked ticket, or
+  stop if `plan` is waiting on the user.
+
+Done when you can state the change in two sentences and name how you'll prove it.
+
+**2. Build.**
+
+- Something is broken, failing, throwing or slow: call `diagnose`. No fix
+  before it has a red loop.
+- New or changed logic with a test seam in reach: call `tdd`.
+- Copy, config, styling, docs, wiring: just make the change.
+- UI: check for a Devl component first (`devl`), then `frontend-design` for new screens.
+
+**3. Prove.** The repo's `verify` skill when it has one, otherwise the
+commands in its AGENTS.md. UI proof: `ui-check` (visual), `ui-qa` (flows).
+
+**4. Review.** Call `cross-review` when the tier is full-stop/full-send, or
+when you'd mark the PR `Risk: medium` or `high`. Hand it the issue so it can
+check the diff against what was asked. Otherwise the built-in `/code-review`
+on your own diff is enough.
+
+**5. Ship.** `file-pr` (Agent/Risk header, Verification, Factory notes),
+then `babysit-pr` until CI is green and the review bots have nothing open.
+Hand the PR back with its link. Merging needs the user or "full send".
+
+**6. Leave notes.** Anything that slowed you down goes under "Factory notes"
+in the PR body: a missing doc, a flaky check, a skill that misled you, a
+command that cost too much. `retro` reads them weekly.
+
+In an unattended run (cloud agent, scheduled task, a thread started from an
+issue) nobody can answer a question mid-run. When `clarify` or `plan` need
+the user, they post on the issue and the run stops; the user's reply starts
+the next run.
 
 ## Which repos
 
@@ -39,7 +86,7 @@ report the link. Only the merge needs the user (or "full send").
 
 | User says | What you do | Merges? |
 |---|---|---|
-| nothing special | Branch, change, prove, open the PR with `file-pr`, report the link. No cross-review, no babysitting. | No |
+| nothing special | The phases above: cross-review only at medium/high risk, babysit to green, report the link. | No |
 | "full stop" | `full-stop`: prove, cross-review (if gated in), file, babysit to ready. | No, the user merges |
 | "full send" | `full-send`: the same, then merge. | Yes, in the user's personal repos |
 
@@ -48,22 +95,14 @@ report the link. Only the merge needs the user (or "full send").
 
 ## Fixing bugs
 
-1. **Reproduce first.** A failing test, a command, or a `ui-qa` session.
-   No reproduction: say so and ask before guessing.
-2. **Find the cause**, not just the line that throws.
-3. **Smallest fix** for the case that happened. No drive-by refactors.
-4. **Watch the same reproduction pass.** Add one focused regression test if
-   the repo has tests and the bug had none.
-5. **Run the repo's checks** (typecheck, lint, test, build, whatever exists).
-6. PR description: what was broken (user's words), cause, fix, how proved.
+The procedure is `diagnose`. Keep the fix to the case that happened, no
+drive-by refactors. PR description: what was broken (user's words), cause,
+fix, how proved.
 
 ## Proof for UI changes
 
-- Visual: `ui-check` (desktop and phone).
-- Behavior or flows: `ui-qa`.
-- Before/after in the PR: `ui-evidence`.
-
-Mocked tests passing does not prove the UI works.
+Before/after images in the PR: `ui-evidence`. Mocked tests passing does not
+prove the UI works.
 
 ## Reviews
 

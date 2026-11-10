@@ -38,7 +38,7 @@ rounds, review skipped for small changes, Greptile only on big PRs.
 
 | Skill | Say | What it does | Source |
 | --- | --- | --- | --- |
-| [pr-workflow](skills/workflow/pr-workflow) | (automatic) | Branch + PR in product repos, tiers, bug-fix procedure, CI template, Greptile rules | mine |
+| [build](skills/workflow/build) | (automatic, any code change) | The factory loop: understand → build → prove → review → ship. Calls the child skills below, plus branch policy, tiers, CI template, Greptile rules | mine (was `pr-workflow`) |
 | [cross-review](skills/workflow/cross-review) | "cross review", "sol loop", "council" | Other flagship (Opus ↔ Sol) reviews the change in a short loop | replaces tstack `sol-loop` + `council` |
 | [full-send](skills/workflow/full-send) | "full send" | Prove, review, file, babysit, merge (personal repos) | tstack, edited |
 | [full-stop](skills/workflow/full-stop) | "full stop" | Same, but stops with the PR ready for you to merge | tstack, edited |
@@ -48,6 +48,25 @@ rounds, review skipped for small changes, Greptile only on big PRs.
 | [leaving-pr-comments](skills/workflow/leaving-pr-comments) | (automatic) | Attribution format for agent-posted comments | tstack |
 | [modernize](skills/workflow/modernize) | "modernize" | Rebase an old PR and decide if it should still exist | tstack |
 | [takeover](skills/workflow/takeover) | "take over" | Finish someone else's PR, branch, or thread | tstack |
+
+### Factory children (`skills/workflow/`)
+
+Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, see
+`skills/workflow/LICENSE-mattpocock`; commit `4ae2317`). Nobody types these:
+`build`, `proj` and `retro` call them. Children set `user-invocable: false` and
+their descriptions start "Called by …".
+
+| Skill | Called by | What it does | Source |
+| --- | --- | --- | --- |
+| [clarify](skills/workflow/clarify) | build, triage | Rounds of numbered questions with recommended answers; ADRs for hard-to-reverse decisions. Unattended runs post the questions on the issue and stop | `grilling` + `domain-modeling` |
+| [plan](skills/workflow/plan) | build, triage | Splits work into tracer-bullet sub-issues with blockers. Small, low-risk plans go straight to `agent-ready`; bigger ones wait for approval | `to-spec` + `to-tickets` |
+| [diagnose](skills/workflow/diagnose) | build | Red loop → reproduce → minimise → hypotheses → fix + regression test | `diagnosing-bugs` |
+| [tdd](skills/workflow/tdd) | build | Red-green at agreed seams | `tdd` |
+| [triage](skills/workflow/triage) | proj | `triage` → `agent-ready` with an agent brief | `triage`, cut down |
+| [retro](skills/workflow/retro) | weekly task | Factory notes → fixes to skills, checks, AGENTS.md | `retro` |
+| [research](skills/workflow/research) | clarify, plan, anyone | Background agent, primary sources, cited markdown | `research` |
+| [wizard](skills/workflow/wizard) | anyone | Bash script that walks you through manual setup (secrets, dashboards) | `wizard` |
+| [writing-for-agents](skills/workflow/writing-for-agents) | retro, skill edits | How to write skills and AGENTS.md | `writing-for-agents` |
 
 The `ui-*` skills run on `agent-browser`. `ui-qa`'s Helium mode (driving your real, logged-in browser) works on macOS only.
 

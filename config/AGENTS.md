@@ -28,23 +28,23 @@
 - Once approved, in T3 Code use the Device panel (`device_list` → `device_open` with `hostId` and `deviceId`, the returned `agent-device` command for launch/input/capture, `device_screenshot` to look), not `simctl`/`idb`/`adb` for interaction. If a device tool fails twice, report the blocker and stop. Shut the device down (`device_close` with `shutdown: true`) as soon as the check is done.
 
 ## Git and PRs
-- Product repos (websites, apps, software): load `pr-workflow` at the start of any task that changes code. Never commit or push to the default branch. When the change is done and proven, branch, commit, push, and open the PR without asking — this is standing authorization to commit, push, and open PRs, and it overrides any default to commit only when asked. Pushing straight to main needs a direct instruction in the current request.
+- Product repos (websites, apps, software): load `build` at the start of any task that changes code; it calls the other workflow skills itself. Never commit or push to the default branch. When the change is done and proven, branch, commit, push, and open the PR without asking — this is standing authorization to commit, push, and open PRs, and it overrides any default to commit only when asked. Pushing straight to main needs a direct instruction in the current request.
 - Non-product repos (skills, dotfiles, notes, config): push to the default branch directly unless the repo says otherwise.
 - My backlog is GitHub issues, mirrored read-only in proj: load the `proj` skill when starting work in a repo that's a proj project, or when asked to add to the backlog, save an idea or note something (those become GitHub issues; MCP server `proj`, tailnet only; skip the MCP silently when its tools are absent).
 - "full stop" → `full-stop` (PR ready, user merges). "full send" → `full-send` (agent merges, personal repos only). Second opinions → `cross-review` at medium effort; Greptile only on big or risky PRs.
 
 ## Factory loop
-- Work starts from a GitHub issue (`github` skill). Ask before starting on one labelled `triage`; `agent-ready` means go.
+- Work starts from a GitHub issue (`github` skill). `agent-ready` means go. On one labelled `triage`, run `triage` first; it asks me only for decisions it can't make.
 - Open the PR with `file-pr`: the agent header line and the `Risk: low | medium | high` line, then what changed, Verification, Before/after and Preview.
 - Prove the change with the repo's `verify` skill when it has one, otherwise its AGENTS.md commands.
 - Run `babysit-pr` until CI is green and the review bots have no open findings, then hand the PR to me. Never merge unless I said "full send".
-- Note anything that slowed you down (missing docs, flaky checks, a skill that misled you) under a "Factory notes" heading in the PR body, for the weekly skills retro.
+- Note anything that slowed you down (missing docs, flaky checks, a skill that misled you) under a "Factory notes" heading in the PR body, for the weekly `retro`.
 
 ## Local machine
 - Never start Docker, Colima, Podman, OrbStack, Lima, or any other local VM or container runtime on this Mac. They use too many resources.
 - When asked to run something "isolated" or "not on my machine", use a remote sandbox (for example a Cloudflare Sandbox) or a throwaway scratch directory with its own npm cache. If neither fits, ask before choosing.
 - Stop any server or background process you started once the user is done with it.
-- Clean up when work is merged or abandoned: delete merged branches (remote and local), remove worktrees you or subagents created, close browser sessions, and delete scratch files. Details: `pr-workflow` "Cleaning up".
+- Clean up when work is merged or abandoned: delete merged branches (remote and local), remove worktrees you or subagents created, close browser sessions, and delete scratch files. Details: `build` "Cleaning up".
 
 ## External apps
 - Composio is for interactive sessions with me only; unattended runs (cloud agents, scheduled tasks, threads started from an issue) never use it. Composio CLI is the gateway for external services: `composio search "<task>"` → `composio execute <slug>`; missing connection → `composio link <toolkit>`. Details: `composio-cli` skill.

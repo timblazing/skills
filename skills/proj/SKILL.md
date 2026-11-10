@@ -1,6 +1,6 @@
 ---
 name: proj
-description: Read my proj dev hub (projects, synced docs, and a mirror of GitHub issues, PRs and notifications) through the read-only proj MCP tools, and turn follow-ups into GitHub issues. Use when starting work in a repo that is a proj project; when asked "what's on my backlog", "what issues are open", or to read a project's docs; when asked to "add to the backlog", "save this as an idea", "note this for later" or "file a follow-up"; and for follow-ups you'd otherwise leave as TODO comments.
+description: Read my proj dev hub (projects, synced docs, and a mirror of GitHub issues, PRs and notifications) through the read-only proj MCP tools, and turn follow-ups into GitHub issues. Use when starting work in a repo that is a proj project; when asked "what's on my backlog", "what's next", "what needs attention", or to read a project's docs; when asked to "add to the backlog", "save this as an idea", "note this for later" or "file a follow-up"; and for follow-ups you'd otherwise leave as TODO comments.
 ---
 
 # proj
@@ -28,6 +28,14 @@ Anywhere a tool takes a project, the repo name works too.
 1. `projects_list` with `repo` set to the repo's name (from `git remote get-url origin`, or the folder name). No project: stop here for proj.
 2. If the task might match an existing issue, check `issues_list` (or `gh issue list`). Keep its number so the PR can say `Closes #N`.
 3. Read `docs_list` / `doc_get` when the task touches something the docs describe.
+
+## Working the backlog
+
+This skill is the entry point for backlog work; call the children yourself:
+
+- An issue labelled `triage` (or unlabelled), or "what needs attention": `triage`.
+- An idea too big for one PR: `plan`. It files sub-issues and decides whether they need my approval.
+- "Work issue #N" or any code change: `build`.
 
 ## Follow-ups become issues
 

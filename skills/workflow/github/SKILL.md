@@ -1,6 +1,6 @@
 ---
 name: github
-description: "Work GitHub with the gh CLI: read and triage issues, carry an issue to a verified PR, branch/commit/PR/CI/merge mechanics, review a PR with inline comments and a verdict, debug failing CI, and fix gh auth. Use when the user mentions a GitHub issue or PR number or URL, says 'fix issue #N', 'triage', 'review this PR', 'why is CI failing', or when gh/git push auth breaks. Policy (tiers, never push to main) lives in pr-workflow; this skill is the gh mechanics."
+description: "Work GitHub with the gh CLI: read and triage issues, carry an issue to a verified PR, branch/commit/PR/CI/merge mechanics, review a PR with inline comments and a verdict, debug failing CI, and fix gh auth. Use when the user mentions a GitHub issue or PR number or URL, says 'fix issue #N', 'triage', 'review this PR', 'why is CI failing', or when gh/git push auth breaks. Policy (tiers, never push to main) lives in build; this skill is the gh mechanics."
 ---
 
 # GitHub
@@ -21,7 +21,7 @@ This file only routes. Read the matching reference before starting that job.
 
 ## Rules
 
-- **Policy comes from `pr-workflow`**: tiers (default, full-stop, full-send) and never pushing to the default branch in product repos. Skills, dotfiles and notes repos push to the default branch directly. The PR body format is `file-pr`.
+- **Policy comes from `build`**: tiers (default, full-stop, full-send) and never pushing to the default branch in product repos. Skills, dotfiles and notes repos push to the default branch directly. The PR body format is `file-pr`.
 - **No bot @-mentions** (`@claude`, `@codex`, `@greptileai`, `@copilot`) in anything you write to GitHub: PR bodies, commits, issue bodies, comments. Bots react even inside backticks. Say "the Codex bot" or "Greptile" without the `@`. Only write one when the user explicitly asked you to trigger that bot.
 - **Review bots** (Greptile, Codex review, Copilot) run only when the user asks.
 - **Comments posted for the user** follow `leaving-pr-comments`.

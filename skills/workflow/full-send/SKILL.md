@@ -57,12 +57,12 @@ one appears.
 5. **Babysit the PR** with the `babysit-pr` skill. Fix real findings and CI
    failures. Get proof for each fix before you push it. After 3 fix pushes,
    stop and ask the user instead of looping. If the repo has no CI, skip the
-   waiting: your local checks are the proof (see `pr-workflow`).
+   waiting: your local checks are the proof (see `build`).
    For big or risky PRs (~300+ changed lines, or auth/payments/data/security)
    with Greptile installed, comment `@greptileai` once to request a review;
    otherwise do not spend Greptile credits.
 6. **Merge** when the merge gate passes.
-7. **Clean up** as in `pr-workflow` ("Cleaning up"): branches, worktrees,
+7. **Clean up** as in `build` ("Cleaning up"): branches, worktrees,
    servers, browser sessions and scratch files from this task.
 8. **Report** in your final message: the PR link, the merge commit, your proof,
    each decision you made for the user, and what you cleaned up.

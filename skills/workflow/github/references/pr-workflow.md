@@ -1,6 +1,6 @@
 # PR mechanics with gh
 
-Which repos get PRs, never pushing to the default branch, the tiers, merge policy and cleanup are in the `pr-workflow` skill. The PR title and body are `file-pr`. This file is only the commands.
+Which repos get PRs, never pushing to the default branch, the tiers, merge policy and cleanup are in the `build` skill. The PR title and body are `file-pr`. This file is only the commands.
 
 ## Branch and commit
 

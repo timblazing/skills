@@ -73,10 +73,13 @@ T3 children get no history, so the brief is complete:
 ```
 Review only. Do not edit, commit, push, comment on PRs, or start subagents.
 Repo: <abs path> Base: <sha> Intent: <1-2 sentences> Out of scope: <scope>
+Issue: <number and its acceptance criteria / agent brief, or "none">
 Checks: <commands and results>
 See: git diff <base> [-- <paths>]; git status --short (read untracked).
 Read the diff, the functions it touches, and their direct callers. Do not
 survey the rest of the repo. Find bugs, broken callers, mismatch with intent.
+Against the issue: criteria missing or only partly done, behaviour nobody
+asked for, criteria that look done but are wrong. Quote the criterion.
 Skip style unless it hides a bug. Hold to the smallest change: flag code,
 tests, or guards the intent does not need.
 blocker = intended case wrong. should = real bug callers will hit. nit = rest.
