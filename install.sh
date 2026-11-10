@@ -63,5 +63,10 @@ for f in "$repo"/config/claude/rules/*.md "$repo"/config/claude/agents/*.md; do
   sub="$(basename "$(dirname "$f")")"
   link "$f" "$HOME/.claude/$sub/$(basename "$f")" config
 done
+# Codex custom agents (sol_engineer, sol_researcher, sol_reviewer).
+mkdir -p "$HOME/.codex/agents"
+for f in "$repo"/config/codex/agents/*.toml; do
+  link "$f" "$HOME/.codex/agents/$(basename "$f")" config
+done
 
 echo "done: $(find "$repo/skills" -mindepth 2 -name SKILL.md | wc -l | tr -d ' ') skills in repo"

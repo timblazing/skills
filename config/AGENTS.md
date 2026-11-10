@@ -1,6 +1,6 @@
 # Global agent instructions (shared by Claude Code and Codex)
 
-## Model and reasoning selection
+## Model and reasoning selection (Codex; Claude Code follows `rules/model-routing.md`)
 - At the start of each task, assess the task type and identify the active model and reasoning effort from the current session context or explicit overrides. Do not assume the configured default is the active setting. If either cannot be determined, say so only when it affects the recommendation.
 - Keep routine coding, repository exploration, tests, boilerplate, and straightforward fixes on GPT-6 Luna Medium. For harder work where conserving flagship usage matters, recommend GPT-6 Luna High or XHigh when the active client supports that effort.
 - Use GPT-6.1 Sol Medium for serious engineering, architecture, debugging, refactors, research synthesis, and orchestration. Recommend Sol High for genuinely difficult work that needs deeper reasoning.
@@ -9,7 +9,7 @@
 - Avoid GPT-5.6 Terra and GPT-5.5 unless a specific task has a clear reason to use one.
 - Keep routine task starts quiet. When the active model or effort appears mismatched, briefly state the task category, current setting if known, and one recommended model and effort. Root-model selection remains with the user; do not claim or imply that you can silently change the active root model.
 
-## Model-specific delegation
+## Model-specific delegation (Codex)
 - Delegate only when independent, bounded exploration, research, implementation, or review work should materially improve speed or coverage. Keep short or dependent work in the main agent, and avoid parallel edits to the same files.
 - Use the configured GPT-6 Luna Medium default for general subagents. For serious engineering or architecture work, use the `sol_engineer` custom agent; use `sol_researcher` for research synthesis and `sol_reviewer` for substantial reviews.
 - Keep Sol specialists at Medium by default. Select High only for genuinely difficult subtasks, and use XHigh for Luna only when supported and justified by task difficulty.
@@ -33,6 +33,13 @@
 - My backlog is GitHub issues, mirrored read-only in proj: load the `proj` skill when starting work in a repo that's a proj project, or when asked to add to the backlog, save an idea or note something (those become GitHub issues; MCP server `proj`, tailnet only; skip the MCP silently when its tools are absent).
 - "full stop" → `full-stop` (PR ready, user merges). "full send" → `full-send` (agent merges, personal repos only). Second opinions → `cross-review` at medium effort; Greptile only on big or risky PRs.
 
+## Factory loop
+- Work starts from a GitHub issue (`github` skill). Ask before starting on one labelled `triage`; `agent-ready` means go.
+- Open the PR with `file-pr`: the agent header line and the `Risk: low | medium | high` line, then what changed, Verification, Before/after and Preview.
+- Prove the change with the repo's `verify` skill when it has one, otherwise its AGENTS.md commands.
+- Run `babysit-pr` until CI is green and the review bots have no open findings, then hand the PR to me. Never merge unless I said "full send".
+- Note anything that slowed you down (missing docs, flaky checks, a skill that misled you) under a "Factory notes" heading in the PR body, for the weekly skills retro.
+
 ## Local machine
 - Never start Docker, Colima, Podman, OrbStack, Lima, or any other local VM or container runtime on this Mac. They use too many resources.
 - When asked to run something "isolated" or "not on my machine", use a remote sandbox (for example a Cloudflare Sandbox) or a throwaway scratch directory with its own npm cache. If neither fits, ask before choosing.
@@ -40,7 +47,7 @@
 - Clean up when work is merged or abandoned: delete merged branches (remote and local), remove worktrees you or subagents created, close browser sessions, and delete scratch files. Details: `pr-workflow` "Cleaning up".
 
 ## External apps
-- Composio CLI is the gateway for external services: `composio search "<task>"` → `composio execute <slug>`; missing connection → `composio link <toolkit>`. Details: `composio-cli` skill.
+- Composio is for interactive sessions with me only; unattended runs (cloud agents, scheduled tasks, threads started from an issue) never use it. Composio CLI is the gateway for external services: `composio search "<task>"` → `composio execute <slug>`; missing connection → `composio link <toolkit>`. Details: `composio-cli` skill.
 - Use `gh` for git/GitHub work on the current repo (PRs, issues, checks).
 - When an issue, issue comment or PR comment should include images (chat attachments, screenshots, reference designs), load `github-issue-images`: `gh` can't upload attachments, so it commits them to a hidden ref in the repo (not a branch, not `main`) and embeds the links.
 - Confirm before any write to an external service (sending, posting, deleting, inviting).

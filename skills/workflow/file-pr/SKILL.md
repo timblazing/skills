@@ -48,6 +48,10 @@ Risk: <low|medium|high>
 ## Preview
 
 <per-PR preview URL, Cloudflare or Vercel projects only>
+
+## Factory notes
+
+<optional: what slowed you down (missing docs, flaky checks, a misleading skill), for the weekly skills retro>
 ```
 
 **Line 1, `Agent:`**, three fields separated by ` | `:
