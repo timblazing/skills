@@ -12,7 +12,6 @@ the agents discover them.
 | Skill | What it does | Source |
 | --- | --- | --- |
 | [agent-browser](skills/agent-browser) | Browser automation CLI for agents | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) (Apache-2.0) |
-| [composio-cli](skills/composio-cli) | Use the Composio CLI to work with external apps | [ComposioHQ/composio](https://github.com/ComposioHQ/composio) (MIT) |
 | [frontend-design](skills/frontend-design) | Distinctive, intentional visual design | [anthropics/skills](https://github.com/anthropics/skills) (Apache-2.0, see LICENSE.txt) |
 | [design-taste-frontend](skills/design-taste-frontend) | Research-led art direction and real-browser visual review | mine (installed globally) |
 | [design-taste-frontend](skills/design-taste-frontend) | Research-driven art direction, page composition, and browser critique | tasteskill v2 (local install) |
@@ -93,6 +92,23 @@ mkdir -p ~/.config/agent-skills && echo open-pencil >> ~/.config/agent-skills/sk
 ./install.sh
 ```
 
+## External apps
+
+Agents reach external apps through [Executor](https://executor.sh), self-hosted at `https://executor.blasingame.dev` (tailnet only), not through a skill. Each machine connects Claude Code and Codex to its MCP endpoint with its own personal access token (Executor → Account → Tokens), so one machine's token can be revoked alone:
+
+```sh
+claude mcp add --transport http --scope user executor https://executor.blasingame.dev/org/executor/mcp --header "Authorization: Bearer <token>"
+```
+
+```toml
+# ~/.codex/config.toml
+[mcp_servers.executor]
+url = "https://executor.blasingame.dev/org/executor/mcp"
+http_headers = { "Authorization" = "Bearer <token>" }
+```
+
+Apps and accounts are added on proj's MCP page. `config/AGENTS.md` tells agents how to use it.
+
 ## Keeping machines in sync
 
 Because the installed skills are symlinks into this repo, editing a skill on any machine edits the repo directly.
@@ -108,4 +124,4 @@ Because the installed skills are symlinks into this repo, editing a skill on any
 
 ## Updating third-party skills
 
-Vendored skills don't update themselves. To refresh one, copy the new version over its folder from the upstream repo, check the diff, and commit. `composio-cli` can also be regenerated with `composio login`.
+Vendored skills don't update themselves. To refresh one, copy the new version over its folder from the upstream repo, check the diff, and commit.

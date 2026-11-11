@@ -47,7 +47,7 @@
 - Clean up when work is merged or abandoned: delete merged branches (remote and local), remove worktrees you or subagents created, close browser sessions, and delete scratch files. Details: `build` "Cleaning up".
 
 ## External apps
-- Composio is for interactive sessions with me only; unattended runs (cloud agents, scheduled tasks, threads started from an issue) never use it. Composio CLI is the gateway for external services: `composio search "<task>"` → `composio execute <slug>`; missing connection → `composio link <toolkit>`. Details: `composio-cli` skill.
+- Executor is the gateway to external apps (email, calendar, Slack, docs and the rest) in interactive sessions with me. It is self-hosted at https://executor.blasingame.dev (tailnet only) and connected to Claude Code and Codex as the `executor` MCP server: `search` for a tool, `describe` it, then `call` it; use `execute` for multi-step scripts. If the app or account isn't connected, tell me to add it on proj's MCP page instead of working around it. Unattended runs (cloud agents, scheduled tasks, threads started from an issue) never use it.
 - Use `gh` for git/GitHub work on the current repo (PRs, issues, checks).
 - When an issue, issue comment or PR comment should include images (chat attachments, screenshots, reference designs), load `github-issue-images`: `gh` can't upload attachments, so it commits them to a hidden ref in the repo (not a branch, not `main`) and embeds the links.
 - Confirm before any write to an external service (sending, posting, deleting, inviting).

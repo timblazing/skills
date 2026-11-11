@@ -5,7 +5,7 @@ description: Put screenshots and images into GitHub issues, issue comments and P
 
 # Images in GitHub issues
 
-GitHub has no API for the `user-attachments` uploads the web editor makes, and `gh` and the Composio GitHub tools can't do it either. Instead, commit the image to `refs/assets/issue-images` in the same repo and embed a link pinned to that commit. That ref is outside `refs/heads`, so it isn't a branch: no "recent pushes" banner, nothing in the branch list or clones, no CI or deploys, and nothing on `main`. It still keeps the commits alive, the link renders for anyone with repo access (private repos included), and agents can fetch the actual file.
+GitHub has no API for the `user-attachments` uploads the web editor makes, and `gh` can't do it either. Instead, commit the image to `refs/assets/issue-images` in the same repo and embed a link pinned to that commit. That ref is outside `refs/heads`, so it isn't a branch: no "recent pushes" banner, nothing in the branch list or clones, no CI or deploys, and nothing on `main`. It still keeps the commits alive, the link renders for anyone with repo access (private repos included), and agents can fetch the actual file.
 
 Don't put images on a branch or commit them to `main` (in product repos that deploys).
 
