@@ -1,11 +1,11 @@
 ---
 name: proj
-description: Read my proj dev hub (projects, synced docs, and a mirror of GitHub issues, PRs and notifications) through the read-only proj MCP tools, and turn follow-ups into GitHub issues. Use when starting work in a repo that is a proj project; when asked "what's on my backlog", "what's next", "what needs attention", or to read a project's docs; when asked to "add to the backlog", "save this as an idea", "note this for later" or "file a follow-up"; and for follow-ups you'd otherwise leave as TODO comments.
+description: Read my proj dev hub (projects, synced docs, and a mirror of GitHub issues and PRs) through the read-only proj MCP tools, and turn follow-ups into GitHub issues. Use when starting work in a repo that is a proj project; when asked "what's on my backlog", "what's next", "what needs attention", or to read a project's docs; when asked to "add to the backlog", "save this as an idea", "note this for later" or "file a follow-up"; and for follow-ups you'd otherwise leave as TODO comments.
 ---
 
 # proj
 
-proj (https://proj.blasingame.dev) is my personal dev hub: projects (each linked to one GitHub repo under `timblazing`), each repo's `docs/` folder synced from GitHub, and a read-only mirror of GitHub issues, PRs and notifications. Agents reach it through the MCP server named `proj` (`https://proj.blasingame.dev/api/mcp`).
+proj (https://proj.blasingame.dev) is my personal dev hub: projects (each linked to one GitHub repo under `timblazing`), each repo's `docs/` folder synced from GitHub, and a read-only mirror of GitHub issues and PRs. Agents reach it through the MCP server named `proj` (`https://proj.blasingame.dev/api/mcp`).
 
 **GitHub issues are the only backlog.** proj has no drafts, ideas, notes or board of its own, and its MCP server is read-only. Anything that should be remembered becomes a GitHub issue on the project's repo.
 
@@ -19,7 +19,6 @@ proj (https://proj.blasingame.dev) is my personal dev hub: projects (each linked
 | `issues_list` | Open (and closed) GitHub issues for a project |
 | `pulls_list` | Open PRs for a project |
 | `docs_list`, `doc_get` | The repo's synced `docs/` and README |
-| `notifications_list` | The GitHub notification bell |
 
 Anywhere a tool takes a project, the repo name works too.
 
@@ -61,6 +60,6 @@ Use the `github` skill for gh mechanics and `github-issue-images` for screenshot
 
 ## Rules
 
-- The proj MCP server is read-only. Never look for or call draft, idea, note or `board_*` tools; they no longer exist.
+- The proj MCP server is read-only. Never look for or call draft, idea, note, `board_*` or `notifications_list` tools; they no longer exist.
 - Never tag `@claude` or `@codex` anywhere: issues, comments, PRs or commits.
 - Keep tool calls few: one lookup at task start, then only what the task needs.
