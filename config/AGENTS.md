@@ -22,6 +22,22 @@
 - My backlog is GitHub issues, mirrored read-only in proj: load the `proj` skill when starting work in a repo that's a proj project, or when asked to add to the backlog, save an idea or note something (those become GitHub issues; MCP server `proj`, tailnet only; skip the MCP silently when its tools are absent).
 - "full stop" → `full-stop` (PR ready, user merges). "full send" → `full-send` (agent merges, personal repos only). Second opinions → `cross-review` at medium effort; Greptile only on big or risky PRs.
 
+## Docs
+- Project docs are markdown in the repo's `docs/` folder, laid out like this (proj's Docs tab shows it):
+  ```
+  docs/
+    README.md          index: what the project is, and links to everything below
+    architecture.md    how it fits together (an architecture/ folder when it gets large)
+    decisions/         ADRs, one per decision: NNNN-short-title.md
+    guides/            how-tos: setup, deploy, release
+    runbooks/          ops: what to do when X breaks
+    reference/         APIs, config, data model
+  ```
+- When you change behavior, config, an API or the deploy process, update the doc that describes it in the same PR. Don't leave docs describing the old behavior.
+- Record a significant decision as a new ADR in `docs/decisions/` (next number, short title, with Context, Decision and Consequences headings).
+- Start every doc with a single `# Title` heading, and use relative links between docs. Keep `docs/README.md` linking to everything else.
+- If a repo's docs are somewhere else or laid out differently, don't reshuffle them as a side effect of other work; move them in a PR of their own. A repo's own `AGENTS.md` docs rules win over these.
+
 ## Factory loop
 - Work starts from a GitHub issue (`github` skill). `agent-ready` means go. On one labelled `triage`, run `triage` first; it asks me only for decisions it can't make.
 - Open the PR with `file-pr`: the agent header line and the `Risk: low | medium | high` line, then what changed, Verification, Before/after and Preview.
