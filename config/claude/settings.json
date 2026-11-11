@@ -1,0 +1,28 @@
+{
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75",
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    "BASH_MAX_OUTPUT_LENGTH": "30000",
+    "ENABLE_TOOL_SEARCH": "true",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
+  },
+  "permissions": {
+    "allow": ["Read(~/.zshrc)", "Bash(curl *)", "mcp__open-pencil__*"],
+    "deny": ["Read(./.env)", "mcp__claude-in-chrome", "mcp__computer-use"]
+  },
+  "model": "opus",
+  "effortLevel": "medium",
+  "outputStyle": "Concise",
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "firecrawl@claude-plugins-official": true,
+    "cloudflare@cloudflare": true
+  },
+  "extraKnownMarketplaces": {
+    "cloudflare": { "source": { "source": "github", "repo": "cloudflare/skills" } }
+  },
+  "spinnerTipsEnabled": false,
+  "alwaysThinkingEnabled": false,
+  "autoCompactEnabled": true,
+  "theme": "dark"
+}
