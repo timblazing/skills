@@ -100,20 +100,26 @@ This repo is my home repo: everything that steers an agent lives here, and every
 | `config/claude/rules/model-routing.md` | `~/.claude/rules/` | Claude Code only: Opus plans, Sonnet and Haiku subagents do the work |
 | `config/claude/agents/*.md` | `~/.claude/agents/` | Claude Code subagents (architect, implementer, quick-worker) |
 | `config/codex/agents/*.toml` | `~/.codex/agents/` | Codex subagents (sol_engineer, sol_researcher, sol_reviewer) |
-| `config/claude/settings.json` | merged into `~/.claude/settings.json` | Claude Code: env, permissions, plugins, model, output style |
+| `config/claude/settings.json` | merged into `~/.claude/settings.json` | Claude Code: shared configuration; see settings ownership below |
 | `config/repos.md` | `~/.agents/repos.md` | Agents working across repos: where each repo is and what it is |
 | `skills/**/SKILL.md` | `~/.agents/skills/`, `~/.claude/skills/` | Every agent: the descriptions decide when a skill loads |
 
 Steering files that don't live here:
 
-- **Each repo's `AGENTS.md`**: rules for that repo only. proj keeps its "Unattended agents", "Code Review Rules" and "Docs" sections current through its setup PR, since GitHub Actions runs and `codex review` read only the repo.
+- **Each repo's `AGENTS.md`**: rules for that repo only. For registered projects, proj refreshes "Unattended agents" and adds missing "Code Review Rules" through its setup PR. The shared Docs rules live in `config/AGENTS.md`; setup leaves existing repo Docs sections alone. This skills repo is outside proj's project registry, so its root instructions need an explicit refresh from proj's template.
 - **Machine-local Claude settings**: `install.sh` merges only the keys in `config/claude/settings.json`. Hooks, the status line and auto mode stay in each machine's `~/.claude/settings.json`, because the tools that add them (proj's activity hook, Orca, hark) write machine-specific paths. Nothing is merged in CI.
 
 `retro` edits these files when a week's Factory notes show an agent was misled. Use `writing-for-agents` for any edit.
 
+### Settings ownership
+
+Approved on 2026-11-12: model, effort, theme and output style belong to each machine; integrations and permission rules stay shared. The installer still replaces every top-level key present in the shared JSON, including those four preferences. Re-running it during automatic sync can reset local choices. [Issue 7](https://github.com/timblazing/skills/issues/7) tracks implementing the approved ownership boundary without changing permission merging. Until that lands, the current installer behavior still applies.
+
 ### Working across repos
 
 Start agents in each repo's own T3 Code project, as usual. For a change that spans repos (a rename across projects, a shared config bump), start in the `skills` project: the shared AGENTS.md points agents at `~/.agents/repos.md`, and each repo still gets its own branch, worktree and PR. Repos are not cloned inside this one, so T3 Code keeps one checkout per repo.
+
+For a change that crosses services, read the [system map](docs/architecture.md) for ownership and authoritative references. A T3 Code project is separate from a registered proj project: skills stays outside proj's registry, and proj's Docs UI stays hidden. Agents reach these shared docs through local pointers or GitHub; proj's docs MCP only covers registered projects.
 
 ## External apps
 
