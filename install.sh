@@ -73,13 +73,20 @@ codex_md="$HOME/.codex/AGENTS.md"
 echo "  wrote $codex_md"
 
 # Claude Code settings: merge the shared keys from config/claude/settings.json
-# into ~/.claude/settings.json. Keys not in the shared file (hooks, statusLine,
-# autoMode, anything a tool installed) are left alone. Skipped in CI.
+# into ~/.claude/settings.json. Each shared top-level key replaces the local one.
+# Keys not in the shared file (hooks, statusLine, autoMode, anything a tool
+# installed) are left alone, and the machine-local preferences below are never
+# written, even if someone adds them to the shared file. Skipped in CI.
 if [[ -z "${CI:-}" ]] && command -v python3 >/dev/null; then
   python3 -I - "$repo/config/claude/settings.json" "$HOME/.claude/settings.json" <<'PY'
 import json, os, sys
 shared_path, target = sys.argv[1], sys.argv[2]
+LOCAL_ONLY = ("model", "effortLevel", "theme", "outputStyle")
 shared = json.load(open(shared_path))
+for key in LOCAL_ONLY:
+    if key in shared:
+        del shared[key]
+        print(f"  skipped machine-local key {key} in {shared_path}")
 current = json.load(open(target)) if os.path.exists(target) else {}
 merged = {**current, **shared}
 if merged != current:

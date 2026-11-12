@@ -107,13 +107,21 @@ This repo is my home repo: everything that steers an agent lives here, and every
 Steering files that don't live here:
 
 - **Each repo's `AGENTS.md`**: rules for that repo only. For registered projects, proj refreshes "Unattended agents" and adds missing "Code Review Rules" through its setup PR. The shared Docs rules live in `config/AGENTS.md`; setup leaves existing repo Docs sections alone. This skills repo is outside proj's project registry, so its root instructions need an explicit refresh from proj's template.
-- **Machine-local Claude settings**: `install.sh` merges only the keys in `config/claude/settings.json`. Hooks, the status line and auto mode stay in each machine's `~/.claude/settings.json`, because the tools that add them (proj's activity hook, Orca, hark) write machine-specific paths. Nothing is merged in CI.
+- **Machine-local Claude settings**: `install.sh` merges only the keys in `config/claude/settings.json`. Hooks, the status line and auto mode stay in each machine's `~/.claude/settings.json`, because the tools that add them (proj's activity hook, Orca, hark) write machine-specific paths. Model, effort, theme and output style are each machine's own (see settings ownership below). Nothing is merged in CI.
 
 `retro` edits these files when a week's Factory notes show an agent was misled. Use `writing-for-agents` for any edit.
 
 ### Settings ownership
 
-Approved on 2026-11-12: model, effort, theme and output style belong to each machine; integrations and permission rules stay shared. The installer still replaces every top-level key present in the shared JSON, including those four preferences. Re-running it during automatic sync can reset local choices. [Issue 7](https://github.com/timblazing/skills/issues/7) tracks implementing the approved ownership boundary without changing permission merging. Until that lands, the current installer behavior still applies.
+`install.sh` runs on every sync and merges `config/claude/settings.json` into `~/.claude/settings.json` one top-level key at a time: a key in the shared file replaces the machine's value for that key, and every other key is left as it is. Nothing is merged in CI (`CI` set), so unattended runs keep the runner's settings.
+
+| Owner | Keys | On sync |
+| --- | --- | --- |
+| Shared (this repo) | `env`, `permissions`, `enabledPlugins`, `extraKnownMarketplaces`, `spinnerTipsEnabled`, `alwaysThinkingEnabled`, `autoCompactEnabled` | Replaced with the shared value. `permissions` is replaced whole, so the shared allow and deny lists win; a rule added to `permissions` in `~/.claude/settings.json` is dropped on the next sync, so put machine-only rules in a project's `.claude/settings.local.json`. |
+| Each machine | `model`, `effortLevel`, `theme`, `outputStyle` | Never written. Set them on each machine with `/model` and `/config`, or by editing `~/.claude/settings.json`. The installer skips them even if they are added to the shared file. |
+| Each machine | Anything else: `hooks`, `statusLine`, `autoMode`, keys a tool installed | Left alone. |
+
+A fresh machine gets Claude Code's defaults for the four preferences until you set them. Moving a key between owners is a decision: update the shared file, the `LOCAL_ONLY` list in `install.sh` and this table together. There is no deep merge of nested keys or permission lists.
 
 ### Working across repos
 

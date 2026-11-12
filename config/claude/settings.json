@@ -10,9 +10,6 @@
     "allow": ["Read(~/.zshrc)", "Bash(curl *)", "mcp__open-pencil__*"],
     "deny": ["Read(./.env)", "mcp__claude-in-chrome", "mcp__computer-use"]
   },
-  "model": "opus",
-  "effortLevel": "medium",
-  "outputStyle": "Concise",
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
     "firecrawl@claude-plugins-official": true,
@@ -23,6 +20,5 @@
   },
   "spinnerTipsEnabled": false,
   "alwaysThinkingEnabled": false,
-  "autoCompactEnabled": true,
-  "theme": "dark"
+  "autoCompactEnabled": true
 }

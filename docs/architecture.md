@@ -30,4 +30,4 @@ Deployment belongs to each product repo's workflow. For example, merging proj's 
 - A service connection or deployment question starts with homelab and the owning repo, then current host evidence. This map does not duplicate secrets or live configuration.
 - Durable work belongs in the owning repo's GitHub issues. Shared knowledge belongs in Markdown with source links, not in a second backlog or a copied chat history.
 
-Keep this map public-safe. Private knowledge stays in its existing private sources until a separate storage decision is made. Model, effort, theme and output style are approved as machine-local preferences; [issue 7](https://github.com/timblazing/skills/issues/7) tracks the installer change still needed to preserve them.
+Keep this map public-safe. Private knowledge stays in its existing private sources until a separate storage decision is made. Model, effort, theme and output style are machine-local Claude preferences that sync never overwrites; the README's [settings ownership](../README.md#settings-ownership) section lists which keys are shared.
