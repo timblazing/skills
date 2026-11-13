@@ -34,6 +34,13 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
+# Keep scratch shots out of git without touching the project's .gitignore (worktrees too: .git may be a file).
+exclude_shots() {
+  local ex; ex="$(git -C "$root" rev-parse --git-common-dir 2>/dev/null)/info/exclude" || return 0
+  [[ "$ex" == /* ]] || ex="$root/$ex"
+  grep -qx '.ui-shots/' "$ex" 2>/dev/null || { mkdir -p "$(dirname "$ex")" && echo '.ui-shots/' >> "$ex"; }
+}
+
 # Off macOS, shoot on the owner's Mac over SSH so pages render in Apple's system font (SF Pro) like the owner sees
 # them; copy the PNGs back and print local paths. --local forces this machine; --keep-open (interactive steps) stays
 # local. Falls back to local when the Mac doesn't answer.
@@ -47,9 +54,7 @@ if [[ $where != local && $keep == 0 && "$(uname)" != Darwin ]]; then
     root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
     if [[ -z "$out" ]]; then
       out="$root/.ui-shots"
-      if [[ -d "$root/.git" ]] && ! grep -qx '.ui-shots/' "$root/.git/info/exclude" 2>/dev/null; then
-        mkdir -p "$root/.git/info" && echo '.ui-shots/' >> "$root/.git/info/exclude"
-      fi
+      exclude_shots
     fi
     mkdir -p "$out"
     while IFS= read -r f; do
@@ -66,10 +71,7 @@ fi
 root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 if [[ -z "$out" ]]; then
   out="$root/.ui-shots"
-  # Keep scratch shots out of git without touching the project's .gitignore.
-  if [[ -d "$root/.git" ]] && ! grep -qx '.ui-shots/' "$root/.git/info/exclude" 2>/dev/null; then
-    mkdir -p "$root/.git/info" && echo '.ui-shots/' >> "$root/.git/info/exclude"
-  fi
+  exclude_shots
 fi
 mkdir -p "$out"
 
