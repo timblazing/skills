@@ -41,7 +41,8 @@ on your own diff is enough.
 
 **5. Ship.** `file-pr` (Agent/Risk header, Verification, Factory notes),
 then `babysit-pr` until CI is green and the review bots have nothing open.
-Hand the PR back with its link. Merging needs the user or "full send".
+Hand the PR back with its link. Merging needs the user or "full send", unless
+the project's auto-merge in proj will merge it (`babysit-pr`, "When proj merges it").
 
 **6. Leave notes.** Anything that slowed you down goes under "Factory notes"
 in the PR body: a missing doc, a flaky check, a skill that misled you, a

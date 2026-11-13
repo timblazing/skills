@@ -26,6 +26,31 @@ Until then, loop: fix, prove, push, wait. After 3 fix pushes without
 agreement, stop and ask the user. Bots that are advisory (CodeRabbit) never
 block the handover.
 
+### When proj merges it
+
+proj (the owner's dev hub) has a per-project auto-merge mode: Off, Low-stakes
+only, or Always. A PR it will merge doesn't need the user. When the proj MCP
+tool `pull_merge_outlook` is loaded, call it at handover with the repo name and
+PR number. Without the tool (cloud runs, CI), skip this section silently.
+
+- **`projMerges: true`, `readyNow: true`:** don't ask the user to merge. Say
+  "Ready; proj auto-merges this (<mode>)". In T3 Code, unwatch and end the turn.
+  T3 settles the thread when the merge lands.
+- **`projMerges: true`, `readyNow: false`:** keep babysitting. `waitingOn` says
+  what's left.
+- **`projMerges: false`:** hand over as usual, with the reason in one line,
+  for example "You merge it: Risk: medium" or "You merge it: touches
+  .github/workflows/ci.yml".
+- **`headSha` isn't your last push:** proj hasn't synced it yet. Ask once more
+  on the next wake. If it still lags, report with the answer you have and say
+  it was for an older head.
+- **`lastAttempt.outcome: failed`:** proj tried and GitHub refused. Report the
+  `detail` and hand the PR to the user.
+
+Never merge it yourself because proj would (that's still "full send" only),
+and never rewrite `Risk:` to get a PR auto-merged. Rate risk honestly per
+`file-pr`.
+
 ## Waiting
 
 Never write your own watcher, polling loop, or `sleep` loop. Use one watcher
@@ -133,7 +158,7 @@ user, and ask before closing the PR unless closure was explicitly authorized.
 If nothing has changed, stay quiet rather than posting filler comments. Stop
 when `pr-wait` exits 0, or in T3 Code when the merge gate passes on the latest
 head. Merge only when the user explicitly requested it;
-otherwise report that the PR is ready. Right before a merge, run `git fetch` and
+otherwise report that the PR is ready (or that proj merges it, above). Right before a merge, run `git fetch` and
 check the PR again. Never merge when it is BEHIND or DIRTY, or when base commits
 that landed after the last green run touch this PR's files. Rebase, push, and
 wait for green again.

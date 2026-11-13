@@ -24,7 +24,11 @@ this task's branch. Never merge, enable auto-merge, enter a merge queue, push
 to the default branch, bypass branch protection, or delegate those actions.
 
 Disable existing auto-merge and remove the PR from any merge queue before
-work begins; check again before each push. Report these changes. If you
+work begins; check again before each push. proj also auto-merges per project:
+when the proj MCP tools are loaded and `projects_list` shows the repo's
+`autoMerge` isn't `off`, add the `no-automerge` label to the PR
+(`gh pr edit N --add-label no-automerge`) so proj leaves it for the user.
+Report these changes. If you
 cannot prevent automatic merging, report the blocker before proceeding.
 
 ## Stop at the gate

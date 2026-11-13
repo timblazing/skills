@@ -15,9 +15,10 @@ proj (https://proj.blasingame.dev) is my personal dev hub: projects (each linked
 
 | Tool | Use |
 | --- | --- |
-| `projects_list` | Map a repo to its project (`repo: "<repo name>"`) |
+| `projects_list` | Map a repo to its project (`repo: "<repo name>"`); also its `autoMerge` mode (off, low, always) |
 | `issues_list` | Open (and closed) GitHub issues for a project |
 | `pulls_list` | Open PRs for a project |
+| `pull_merge_outlook` | Whether proj will auto-merge a PR, or why the user merges it. Call it at PR handover (`babysit-pr`) |
 | `docs_list`, `doc_get` | The repo's synced `docs/` and README |
 
 Anywhere a tool takes a project, the repo name works too.

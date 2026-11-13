@@ -42,7 +42,7 @@
 - Work starts from a GitHub issue (`github` skill). `agent-ready` means go. On one labelled `triage`, run `triage` first; it asks me only for decisions it can't make.
 - Open the PR with `file-pr`: the agent header line and the `Risk: low | medium | high` line, then what changed, Verification, Before/after and Preview.
 - Prove the change with the repo's `verify` skill when it has one, otherwise its AGENTS.md commands.
-- Run `babysit-pr` until CI is green and the review bots have no open findings, then hand the PR to me. Never merge unless I said "full send".
+- Run `babysit-pr` until CI is green and the review bots have no open findings, then hand the PR to me, unless proj will auto-merge it (`babysit-pr` "When proj merges it"). Never merge unless I said "full send".
 - Note anything that slowed you down (missing docs, flaky checks, a skill that misled you) under a "Factory notes" heading in the PR body, for the weekly `retro`.
 
 ## Local machine
