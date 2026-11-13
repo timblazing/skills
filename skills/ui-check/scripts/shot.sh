@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
 # Headless screenshot helper on top of agent-browser.
 # Usage: shot.sh <url> [--phone|--desktop|--both] [--dark] [--el <selector>] [--full]
-#                [--hidpi] [--name <base>] [--out <dir>] [--keep-open] [--wait <ms>]
+#                [--hidpi] [--name <base>] [--out <dir>] [--keep-open] [--wait <ms>] [--mac|--local]
+# Off macOS it shoots on the owner's Mac over SSH by default (UI_SHOT_MAC, default clayblasingame@mac).
 # Prints one saved PNG path per line.
 set -euo pipefail
 
 url="${1:?usage: shot.sh <url> [options]}"; shift
-mode=desktop dark=0 el="" full=0 hidpi=0 name="" out="" keep=0 wait_ms=800
+mode=desktop dark=0 el="" full=0 hidpi=0 name="" out="" keep=0 wait_ms=800 where=auto
+# Options forwarded to the Mac (everything except where to shoot and where to save).
+orig=(); skip=0
+for a in "$@"; do
+  if [[ $skip == 1 ]]; then skip=0; continue; fi
+  case "$a" in --out) skip=1 ;; --mac|--local) ;; *) orig+=("$a") ;; esac
+done
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --phone) mode=phone ;;
@@ -20,10 +27,41 @@ while [[ $# -gt 0 ]]; do
     --out) out="$2"; shift ;;
     --keep-open) keep=1 ;;
     --wait) wait_ms="$2"; shift ;;
+    --local) where=local ;;
+    --mac) where=mac ;;
     *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
   shift
 done
+
+# Off macOS, shoot on the owner's Mac over SSH so pages render in Apple's system font (SF Pro) like the owner sees
+# them; copy the PNGs back and print local paths. --local forces this machine; --keep-open (interactive steps) stays
+# local. Falls back to local when the Mac doesn't answer.
+mac_host="${UI_SHOT_MAC:-clayblasingame@mac}"
+if [[ $where != local && $keep == 0 && "$(uname)" != Darwin ]]; then
+  if ssh -o BatchMode=yes -o ConnectTimeout=5 "$mac_host" true 2>/dev/null; then
+    remote_out="/tmp/ui-shots-remote/$$-$RANDOM"
+    fwd=()
+    for a in "${orig[@]}"; do fwd+=("$(printf '%q' "$a")"); done
+    files="$(ssh -o BatchMode=yes "$mac_host" "zsh -lc $(printf '%q' "\$HOME/.agents/skills/ui-check/scripts/shot.sh $(printf '%q' "$url") ${fwd[*]} --local --out $remote_out")")"
+    root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+    if [[ -z "$out" ]]; then
+      out="$root/.ui-shots"
+      if [[ -d "$root/.git" ]] && ! grep -qx '.ui-shots/' "$root/.git/info/exclude" 2>/dev/null; then
+        mkdir -p "$root/.git/info" && echo '.ui-shots/' >> "$root/.git/info/exclude"
+      fi
+    fi
+    mkdir -p "$out"
+    while IFS= read -r f; do
+      [[ -n "$f" ]] || continue
+      scp -q -o BatchMode=yes "$mac_host:$f" "$out/" && echo "$out/$(basename "$f")"
+    done <<< "$files"
+    ssh -o BatchMode=yes "$mac_host" "rm -rf $remote_out" || true
+    exit 0
+  fi
+  [[ $where == mac ]] && { echo "Mac ($mac_host) not reachable over SSH" >&2; exit 1; }
+  echo "note: Mac not reachable; shooting locally (fonts differ from the owner's)" >&2
+fi
 
 root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 if [[ -z "$out" ]]; then

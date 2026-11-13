@@ -20,6 +20,8 @@ Everything runs headless through `agent-browser` — no window opens, nothing st
 
 Use 1x for checks (small images, fast to read). `--hidpi` (2x desktop / 3x phone) is only for images humans will see — see ui-evidence.
 
+**Render where the owner looks.** Off macOS (anton, cloud boxes), `shot.sh` runs on the owner's Mac over SSH (`UI_SHOT_MAC`, default `clayblasingame@mac` on the tailnet) and copies the PNGs back, so pages render in Apple's system font (SF Pro) like the owner's Mac and iPhone. On Linux, `-apple-system` falls back to another font and text wraps differently. `--local` forces this machine. If the Mac doesn't answer, the script shoots locally and prints a note; say in your report that fonts may differ. `--keep-open` (multi-step states below) always runs locally. It's still Chrome, not Safari: safe-area insets and Safari-only quirks need the owner's phone.
+
 ## Capture
 
 ```bash
