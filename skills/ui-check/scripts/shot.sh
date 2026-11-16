@@ -33,6 +33,8 @@ while [[ $# -gt 0 ]]; do
   esac
   shift
 done
+# agent-browser resolves relative paths from its daemon's cwd, so a relative --out silently saves elsewhere.
+[[ -n "$out" && "$out" != /* ]] && out="$PWD/$out"
 
 # Keep scratch shots out of git without touching the project's .gitignore (worktrees too: .git may be a file).
 exclude_shots() {
