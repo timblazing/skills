@@ -150,7 +150,7 @@ Because the installed skills are symlinks into this repo, editing a skill on any
 - **Change a skill:** edit it in `skills/`, then commit and push.
 - **Add a skill:** drop its folder in `skills/`, run `./install.sh`, then commit and push.
 - **Remove a skill:** delete its folder and run `./install.sh`, which prunes the dead links. Then commit and push.
-- **Other machines:** `git pull && ./install.sh`. A cron entry handles this:
+- **Other machines:** `git pull && ./install.sh`. On anton, a user systemd timer (`agent-skills-sync.timer`) runs `~/.local/bin/sync-agent-skills` hourly against `~/.local/share/agent-skills`; it pulls and reruns `install.sh` only when `main` moved. Elsewhere, a cron entry does the same:
 
   ```cron
   0 * * * * cd ~/DEV/github/skills && git pull -q --ff-only && ./install.sh >/dev/null
