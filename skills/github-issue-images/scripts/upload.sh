@@ -27,7 +27,8 @@ done
 shift $((OPTIND - 1))
 [[ $# -gt 0 ]] || { sed -n 2,14p "$0"; exit 2; }
 [[ -n "$repo" ]] || repo="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
-[[ -n "$dir" ]] || dir="$(date +%F)-$(LC_ALL=C tr -dc a-z0-9 </dev/urandom | head -c 6)"
+# od reads 3 bytes and exits; `tr </dev/urandom | head` dies of SIGPIPE under pipefail.
+[[ -n "$dir" ]] || dir="$(date +%F)-$(od -An -N3 -tx1 /dev/urandom | tr -d ' \n')"
 
 parent=$(gh api "repos/$repo/git/ref/$REF" -q .object.sha 2>/dev/null || true)
 
