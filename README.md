@@ -13,12 +13,9 @@ the agents discover them.
 | --- | --- | --- |
 | [agent-browser](skills/agent-browser) | Browser automation CLI for agents | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) (Apache-2.0) |
 | [frontend-design](skills/frontend-design) | Distinctive, intentional visual design | [anthropics/skills](https://github.com/anthropics/skills) (Apache-2.0, see LICENSE.txt) |
-| [design-taste-frontend](skills/design-taste-frontend) | Research-led art direction and real-browser visual review | mine (installed globally) |
-| [design-taste-frontend](skills/design-taste-frontend) | Research-driven art direction, page composition, and browser critique | tasteskill v2 (local install) |
+| [design-taste-frontend](skills/design-taste-frontend) | Research-led art direction, page composition and real-browser critique | tasteskill v2 |
 | [github-issue-images](skills/github-issue-images) | Screenshots in GitHub issues and comments via a hidden git ref (not a branch) | mine |
 | [open-pencil](skills/open-pencil) | Inspect, edit and export `.fig` files via OpenPencil | [open-pencil/open-pencil](https://github.com/open-pencil/open-pencil) (MIT) |
-| [openui](skills/openui) | Official OpenUI generative UI, language, components, and agent integration guidance | [thesysdev/skills](https://github.com/thesysdev/skills), revision `bcd93adc9185e333bc9a83b29f7d81d67ab1935f` (complete skill directory) |
-| [openui-t3](skills/openui-t3) | In-chat OpenUI interfaces: Codex MCP App with approved agent handoff, plus HTML fallback | mine; official OpenUI React runtime and MCP Apps SDK |
 | [proj](skills/proj) | Read proj (read-only MCP, tailnet only) and file follow-ups as GitHub issues | mine |
 | [pick-ui-library](skills/pick-ui-library) | Curated library picks for frontend tasks (manual invoke only) | [emilkowalski/skills](https://github.com/emilkowalski/skills) (MIT) |
 | [scan-to-threejs](skills/scan-to-threejs) | Rebuild editable Three.js rooms from scans and photo references | [wesbos/3d-model-anything](https://github.com/wesbos/3d-model-anything/tree/main/.agents/skills/scan-to-threejs) |
