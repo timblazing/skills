@@ -38,8 +38,19 @@ commands in its AGENTS.md. UI proof: `ui-check` (visual), `ui-qa` (flows).
 when you'd mark the PR `Risk: medium` or `high`. Hand it the issue so it can
 check the diff against what was asked. Otherwise the built-in `/code-review`
 on your own diff is enough.
+If your brief forbids subagents, you can't run `cross-review`: write
+"Cross-review: not run (brief forbade subagents)" in the PR and in your
+hand-back, and the parent that delegated to you runs it before the PR merges.
 
-**5. Ship.** `file-pr` (Agent/Risk header, Verification, Factory notes),
+**5. Ship.** Before every push, `git fetch origin` and rebase on the default
+branch: main moves under parallel agents. Then re-check the numbers of any
+ADRs you added against `docs/decisions/` on main (parallel branches take the
+same next number), and push with `git push -u origin HEAD:$(git branch --show-current)`,
+because T3 can rename the worktree's branch mid-task and the branch may be
+checked out in another worktree. Before pushing a follow-up to an existing
+PR, check it's still open (`gh pr view --json state`); if it merged, open a
+new PR from the default branch.
+`file-pr` (Agent/Risk header, Verification, Factory notes),
 then `babysit-pr` until CI is green and the review bots have nothing open.
 Hand the PR back with its link. Merging needs the user or "full send", unless
 the project's auto-merge in proj will merge it (`babysit-pr`, "When proj merges it").
