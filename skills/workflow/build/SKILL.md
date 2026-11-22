@@ -29,10 +29,11 @@ Done when you can state the change in two sentences and name how you'll prove it
   before it has a red loop.
 - New or changed logic with a test seam in reach: call `tdd`.
 - Copy, config, styling, docs, wiring: just make the change.
-- UI: check for a Devl component first (`devl`), then `frontend-design` for new screens.
+- UI: read [Frontend routing](references/frontend.md) for design direction, catalog patterns, existing primitives and the UI SDK boundary before choosing components.
 
 **3. Prove.** The repo's `verify` skill when it has one, otherwise the
-commands in its AGENTS.md. UI proof: `ui-check` (visual), `ui-qa` (flows).
+commands in its AGENTS.md. For UI proof selection and authorization, follow
+[Frontend routing](references/frontend.md#proof).
 
 **4. Review.** Call `cross-review` when the tier is full-stop/full-send, or
 when you'd mark the PR `Risk: medium` or `high`. Hand it the issue so it can
@@ -113,8 +114,8 @@ fix, how proved.
 
 ## Proof for UI changes
 
-Before/after images in the PR: `ui-evidence`. Mocked tests passing does not
-prove the UI works.
+Use the [frontend proof guidance](references/frontend.md#proof); before/after
+images for a PR use `ui-evidence`.
 
 ## Reviews
 

@@ -7,6 +7,8 @@ description: Functionally test a web app in a browser — click through flows, f
 
 All browser work goes through `agent-browser`. Never use computer-use, Claude in Chrome, Chrome DevTools MCP, Playwright, or an in-app browser. Load the version-matched guide once per task if you need command details: `agent-browser skills get core`.
 
+Before opening a browser, apply the [frontend proof and authorization guidance](../workflow/build/references/frontend.md#proof).
+
 ## Mode 1 — headless (default)
 
 Isolated Chromium, no window, no focus stealing. Use for local dev servers, previews, and anything that doesn't need the user's real accounts.
@@ -53,6 +55,10 @@ Prefer copying auth into headless when possible: `agent-browser --session helium
 - Performance: `agent-browser vitals [url]` (LCP/CLS/INP…), `trace start|stop`, `profiler start|stop`.
 - React internals: `open --enable react-devtools <url>`, then `react tree|inspect|renders`.
 - Screenshot diffs: `agent-browser diff screenshot --baseline <png>`.
+
+## Interaction checks
+
+For the affected controls, verify observable outcomes with real keyboard events: Tab/Shift+Tab order, visible focus, Enter/Space activation and the widget's expected arrow keys. For a modal, check initial focus, containment while open, Escape/cancel behavior and focus returning to the trigger. Confirm disabled controls cannot act, invalid inputs explain recovery, and submission changes the intended state once. Check only the states relevant to the change, including loading, empty, error and success where present. Re-query refs after rerenders; assert the resulting value, message or persisted state rather than just a successful click. Use safe fixtures for mutations and keep external writes within authorization.
 
 ## Report
 

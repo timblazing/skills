@@ -15,6 +15,8 @@ description: >-
 
 # tasteskill v2
 
+For project UI work, apply [frontend routing](../workflow/build/references/frontend.md) before selecting patterns or running browser scripts. It defines shared component selection and proof permissions.
+
 A page built by a model usually looks like the average of every page the model has seen: a centred
 headline over three lines, a little label above it, a row of icon cards, a soft gradient, a few thin
 rules and a monospace caption. Nothing in it is wrong and nothing in it was decided.
