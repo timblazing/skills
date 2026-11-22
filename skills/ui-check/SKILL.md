@@ -9,6 +9,8 @@ Goal: see the UI with as few browser steps as possible. Capture images, read the
 
 Everything runs headless through `agent-browser` — no window opens, nothing steals focus. Never use computer-use, Claude in Chrome, Chrome DevTools MCP, Playwright, or an in-app browser for this.
 
+Before capture, apply the [frontend proof and authorization guidance](../workflow/build/references/frontend.md#proof).
+
 ## Standards
 
 | Check | Size | Command flag |

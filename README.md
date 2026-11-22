@@ -20,6 +20,7 @@ the agents discover them.
 | [pick-ui-library](skills/pick-ui-library) | Curated library picks for frontend tasks (manual invoke only) | [emilkowalski/skills](https://github.com/emilkowalski/skills) (MIT) |
 | [scan-to-threejs](skills/scan-to-threejs) | Rebuild editable Three.js rooms from scans and photo references | [wesbos/3d-model-anything](https://github.com/wesbos/3d-model-anything/tree/main/.agents/skills/scan-to-threejs) |
 | [security-audit](skills/security-audit) | Source-first security review and full codebase audits with validated findings | [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill), revision `c1c8a8c1471069fb0e188eeaff69b8e8db6564a8` (MIT, see LICENSE) |
+| [ui-sdk](skills/ui-sdk) | UI SDK composition and interaction tests for existing SDK projects or authorized pilots | [vercel-labs/ui](https://github.com/vercel-labs/ui/tree/8060d16d7a9ab3fc79fee25764607344df078c36/packages/core/skills/ui-sdk), pinned `8060d16d7a9ab3fc79fee25764607344df078c36` (Apache-2.0; [local adaptations](skills/ui-sdk/PROVENANCE.md)) |
 | [ui-check](skills/ui-check) | Headless screenshots to visually check UI | mine |
 | [ui-qa](skills/ui-qa) | Functional browser testing: flows, forms, console errors | mine |
 | [ui-evidence](skills/ui-evidence) | Before/after screenshots committed to a PR | mine |
@@ -63,6 +64,8 @@ their descriptions start "Called by …".
 | [research](skills/workflow/research) | clarify, plan, anyone | Background agent, primary sources, cited markdown | `research` |
 | [wizard](skills/workflow/wizard) | anyone | Bash script that walks you through manual setup (secrets, dashboards) | `wizard` |
 | [writing-for-agents](skills/workflow/writing-for-agents) | retro, skill edits | How to write skills and AGENTS.md | `writing-for-agents` |
+
+Frontend work enters through `build` and its [frontend routing reference](skills/workflow/build/references/frontend.md): design direction, personal catalog and applicable Devl patterns, existing primitives, then functional and visual proof. The UI SDK skill is scoped to existing integrations or an authorized pilot; it does not migrate projects or require agent bridges.
 
 The `ui-*` skills run on `agent-browser`. `ui-qa`'s Helium mode (driving your real, logged-in browser) works on macOS only.
 
