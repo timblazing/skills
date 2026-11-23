@@ -23,7 +23,11 @@ Then decide which case you're in:
 
 Done when you can state the change in two sentences and name how you'll prove it.
 
-**2. Build.**
+**2. Build.** A fresh worktree has no dependencies: run the repo's install
+(`pnpm install --frozen-lockfile`, `bun install`, and the same in any nested
+package with its own lockfile) before tests, typecheck, or reading docs under
+`node_modules/`. On the Mac the shell is zsh with BSD tools: quote globs
+(`--include='*.ts'`) and write `sed -i ''`.
 
 - Something is broken, failing, throwing or slow: call `diagnose`. No fix
   before it has a red loop.
@@ -34,6 +38,10 @@ Done when you can state the change in two sentences and name how you'll prove it
 **3. Prove.** The repo's `verify` skill when it has one, otherwise the
 commands in its AGENTS.md. For UI proof selection and authorization, follow
 [Frontend routing](references/frontend.md#proof).
+If `next build` stops with a Next.js security-upgrade notice
+(`SecurityFatalError`), the repo's Next version has a published advisory: a
+retry passes, but the advisory is real. Check for an open upgrade issue or PR
+and file one if there is none; keep the upgrade out of this PR.
 
 **4. Review.** Call `cross-review` when the tier is full-stop/full-send, or
 when you'd mark the PR `Risk: medium` or `high`. Hand it the issue so it can
@@ -46,9 +54,11 @@ hand-back, and the parent that delegated to you runs it before the PR merges.
 **5. Ship.** Before every push, `git fetch origin` and rebase on the default
 branch: main moves under parallel agents. Then re-check the numbers of any
 ADRs you added against `docs/decisions/` on main (parallel branches take the
-same next number), and push with `git push -u origin HEAD:$(git branch --show-current)`,
-because T3 can rename the worktree's branch mid-task and the branch may be
-checked out in another worktree. Before pushing a follow-up to an existing
+same next number). Then read the branch name with `git branch --show-current`
+and push with `git push -u origin HEAD:<that name>`, because T3 can rename the
+worktree's branch mid-task and the branch may be checked out in another
+worktree. Run git as one plain command per shell call: worktree-isolated
+agents refuse git inside `&&` chains or `$(...)`. Before pushing a follow-up to an existing
 PR, check it's still open (`gh pr view --json state`); if it merged, open a
 new PR from the default branch.
 `file-pr` (Agent/Risk header, Verification, Factory notes),
