@@ -8,7 +8,7 @@
 gh issue list                                   # open
 gh issue list --state all --search "login error"
 gh issue list --label bug --assignee @me
-gh issue view 42 --comments                     # always with comments
+gh issue view 42 --json title,body,comments     # always with comments (--comments can print nothing)
 gh issue view 42 --json title,body,labels,state,comments
 ```
 

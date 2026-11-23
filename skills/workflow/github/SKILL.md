@@ -31,4 +31,4 @@ This file only routes. Read the matching reference before starting that job.
 - **Commit messages** follow the repo's history, not a fixed convention.
 - **GraphQL rate limit**: `gh pr view/create/checks` and `gh issue` use GraphQL. When it's spent, use `gh api` REST (`references/api-cheatsheet.md`); the REST limit is separate. Check with `gh api rate_limit`.
 - **Never claim remote state from memory.** CI green, merged, issue closed: read it with `gh` first.
-- **Read the thread first**: `gh issue view N --comments`, `gh pr view N --comments`. Decisions live in comments, not titles. Search for duplicates before creating anything.
+- **Read the thread first**: `gh issue view N --json title,body,comments`, `gh pr view N --json title,body,comments` (`--comments` can print nothing). Decisions live in comments, not titles. Search for duplicates before creating anything.
