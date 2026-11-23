@@ -1,0 +1,107 @@
+# Shared Claude Code job for every proj project. Each repo's .github/workflows/claude.yml is a short stub
+# written by proj's agent setup: it names the triggers and calls this file at @main, passing its CLAUDE_*
+# repo variables as inputs and `secrets: inherit` for CLAUDE_CODE_OAUTH_TOKEN. proj sets those variables
+# from Settings → Agents → Handoff; an unset one falls back to the default below.
+#
+# A change here reaches every repo on its next run, with no per-repo PR. Review it like a deploy.
+name: Claude agent
+
+on:
+  workflow_call:
+    inputs:
+      runner:
+        description: Runner label (CLAUDE_RUNNER). GitHub-hosted by default; anton-jit is a per-project opt-in.
+        type: string
+        default: ''
+      model:
+        description: Claude model ID (CLAUDE_MODEL).
+        type: string
+        default: ''
+      effort:
+        description: Reasoning effort (CLAUDE_EFFORT).
+        type: string
+        default: ''
+      timeout-minutes:
+        description: Job timeout in minutes (CLAUDE_TIMEOUT_MINUTES).
+        type: string
+        default: ''
+      skills-repo:
+        description: Skills repository URL (CLAUDE_SKILLS_REPO).
+        type: string
+        default: ''
+      skills-ref:
+        description: Skills branch or tag (CLAUDE_SKILLS_REF).
+        type: string
+        default: ''
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN:
+        required: false
+
+jobs:
+  claude:
+    # Mentions from timblazing only. `github` is the caller's event context.
+    if: |
+      github.event.sender.login == 'timblazing' && (
+        (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+        (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+        (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
+        (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+      )
+    # bypassPermissions below requires a trusted, isolated runner.
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
+    timeout-minutes: ${{ fromJSON(inputs.timeout-minutes || '60') }}
+    env:
+      CLAUDE_CODE_SUBAGENT_MODEL: sonnet
+      ENABLE_TOOL_SEARCH: 'true'
+      BASH_MAX_OUTPUT_LENGTH: '30000'
+      CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: '75'
+      CLAUDE_CODE_DISABLE_AUTO_MEMORY: '1'
+      SKILLS_REPO: ${{ inputs.skills-repo || 'https://github.com/timblazing/skills' }}
+      SKILLS_REF: ${{ inputs.skills-ref || 'main' }}
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # Links the skills into ~/.claude/skills and ~/.agents/skills. Pulls instead of cloning when
+      # HOME already has them (a persistent self-hosted runner; anton-jit jobs get a fresh HOME).
+      - name: Install skills
+        shell: bash
+        run: |
+          if [ -d "$HOME/skills/.git" ]; then
+            git -C "$HOME/skills" pull --ff-only
+          elif [ "$SKILLS_REF" = main ]; then
+            git clone --depth 1 "$SKILLS_REPO" "$HOME/skills"
+          else
+            git clone --depth 1 --branch "$SKILLS_REF" "$SKILLS_REPO" "$HOME/skills"
+          fi
+          "$HOME/skills/install.sh"
+
+      # pnpm/yarn ship through corepack; ubuntu-latest has Node but not pnpm on PATH.
+      - name: Enable corepack
+        run: corepack enable || true
+
+      # Tailnet-only MCP: probe from this runner, never add an unreachable server.
+      - name: Configure available MCP servers
+        id: proj
+        shell: bash
+        run: |
+          config='{"mcpServers":{}}'
+          if curl --fail --silent --max-time 5 https://proj.blasingame.dev/api/health >/dev/null; then
+            config=$(printf '%s' "$config" | jq -c '.mcpServers.proj = {type:"http",url:"https://proj.blasingame.dev/api/mcp"}')
+          fi
+          printf "args=--mcp-config '%s'\n" "$config" >> "$GITHUB_OUTPUT"
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: >-
+            --model ${{ inputs.model || 'claude-opus-5-5' }} --effort ${{ inputs.effort || 'medium' }}
+            --permission-mode bypassPermissions
+            ${{ steps.proj.outputs.args }}
