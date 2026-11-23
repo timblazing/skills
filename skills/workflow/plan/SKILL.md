@@ -24,7 +24,8 @@ first ticket.
 
 Each ticket is a **tracer bullet**: a narrow but complete path through every
 layer it touches (schema, API, UI, tests), demoable or verifiable on its own,
-sized for one agent session and one PR. Not a horizontal layer.
+sized for one agent session and one PR of under ~400 changed lines (not
+counting lockfiles, generated files and snapshots). Not a horizontal layer.
 
 Give each ticket its **blockers**: the tickets that must merge first. No
 blockers means it can start now.
@@ -62,7 +63,7 @@ Body:
 <the end-to-end behaviour, from the user's side>
 
 ## Acceptance criteria
-- [ ] <independently checkable>
+- [ ] <independently checkable; at least one a test or `verify` can prove>
 
 ## Blocked by
 - #<n>, or "None, can start now"

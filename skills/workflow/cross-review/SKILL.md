@@ -45,7 +45,8 @@ skip and say why in the report if the change is:
 - under ~30 changed lines of behavior code with direct proof, outside the
   risk areas below.
 
-Risk areas, which always get review: auth, permissions, payments, data
+A `Risk: medium` or `high` PR is never skipped: `build`'s review gate
+requires the review. Risk areas, which always get review: auth, permissions, payments, data
 deletion or migration, security, concurrency/state, public API changes.
 
 ## Budget

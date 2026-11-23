@@ -35,7 +35,11 @@ user pick.
 3. **Fill the gaps.** Missing decisions go to `clarify`. Too big for one PR
    goes to `plan`, which sets its own labels.
 4. **Write the brief** as an issue comment, then swap `triage` for
-   `agent-ready`. In an interactive session, show the brief first. In an
+   `agent-ready`. A brief earns `agent-ready` only when at least one
+   acceptance criterion is a check a test or the repo's `verify` can prove
+   (a command, a test case, an observable output). Criteria that only a
+   person can judge ("looks better") need a provable one beside them, or
+   the open question goes to `clarify`. In an interactive session, show the brief first. In an
    unattended run, relabel only when the brief needs no decision from the
    owner; otherwise the `clarify` questions go up with
    `<!-- proj-agent: needs-input -->` and the label stays.
@@ -60,6 +64,7 @@ or line numbers. [AGENT-BRIEF.md](AGENT-BRIEF.md) has worked examples.
 **Key interfaces:** <types, functions, routes or config the change goes through>
 
 **Acceptance criteria:**
+- [ ] <provable by a test or `verify`: the command or case that shows it>
 - [ ] <independently checkable>
 
 **Out of scope:**

@@ -35,6 +35,9 @@ plain text, no bold, no backticks, one per line, at the very top.
 Agent: <harness> | <orchestrator> | <model>
 Risk: <low|medium|high>
 
+**Intent:** <one sentence: what this PR is for>
+**Must not break:** <the behaviours a reviewer should check survive>
+
 <what changed>
 
 ## Verification
@@ -78,6 +81,11 @@ config, credential handling). When unsure, pick the higher level.
 
 Parsers match `^Agent: (.+?) \| (.+?) \| (.+)$` and
 `^Risk: (low|medium|high)$` on the first two lines. Don't reword them.
+
+**Intent block**, right after the two header lines: one sentence of
+intent and a short list or sentence of what must keep working. It lets the
+owner judge a `Risk: high` PR in a minute (the `build` review gate), so write
+it for every PR and keep it to those two lines.
 
 The header replaces any default harness footer (such as "Generated with
 Claude Code"); do not add both.

@@ -14,14 +14,19 @@ never types these. A phase that doesn't apply is skipped silently.
 **1. Understand.** Read the issue and its comments (`github`), or the request.
 Then decide which case you're in:
 
-- *Clear and fits one PR*: go to Build.
+- *Clear and fits one PR*: go to Build. One PR means under ~400 changed
+  lines, not counting lockfiles, generated files and snapshots. Bigger work
+  is several PRs, stacked or in sequence.
 - *Fuzzy*: a decision only the user can make is missing (behaviour, scope,
   UX, a trade-off). Call `clarify`. A missing *fact* is yours to look up.
 - *Bigger than one PR*: call `plan`. It files sub-issues and decides whether
   the user must approve them first. Then build the first unblocked ticket, or
   stop if `plan` is waiting on the user.
 
-Done when you can state the change in two sentences and name how you'll prove it.
+Done when you can state the change in two sentences and name its
+**acceptance check**: a test or a `verify` step that fails now and passes
+once the change is done. Take it from the issue's acceptance criteria; when
+there are none, write one and put it in the PR body.
 
 **2. Build.** A fresh worktree has no dependencies: run the repo's install
 (`pnpm install --frozen-lockfile`, `bun install`, and the same in any nested
@@ -31,7 +36,8 @@ package with its own lockfile) before tests, typecheck, or reading docs under
 
 - Something is broken, failing, throwing or slow: call `diagnose`. No fix
   before it has a red loop.
-- New or changed logic with a test seam in reach: call `tdd`.
+- New or changed logic with a test seam in reach: call `tdd`, and make the
+  acceptance check its first red test.
 - Copy, config, styling, docs, wiring: just make the change.
 - UI: read [Frontend routing](references/frontend.md) for design direction, catalog patterns, existing primitives and the UI SDK boundary before choosing components.
 
@@ -43,10 +49,18 @@ If `next build` stops with a Next.js security-upgrade notice
 retry passes, but the advisory is real. Check for an open upgrade issue or PR
 and file one if there is none; keep the upgrade out of this PR.
 
-**4. Review.** Call `cross-review` when the tier is full-stop/full-send, or
-when you'd mark the PR `Risk: medium` or `high`. Hand it the issue so it can
-check the diff against what was asked. Otherwise the built-in `/code-review`
-on your own diff is enough.
+**4. Review.** The PR's `Risk:` level sets the gate it must pass before it
+merges:
+
+| Risk | Gate |
+|---|---|
+| low | CI green, and one review bot has reviewed the latest head with no open P0/P1 finding. Your own `/code-review` before pushing. |
+| medium | The low gate, plus `cross-review`. |
+| high | The medium gate, plus the owner reads the PR's Intent block (`file-pr`) before it merges. |
+
+Full-stop/full-send also call `cross-review` on a low-risk PR (it may skip
+a tiny one). Hand `cross-review` the issue so it can check the diff against
+what was asked.
 If your brief forbids subagents, you can't run `cross-review`: write
 "Cross-review: not run (brief forbade subagents)" in the PR and in your
 hand-back, and the parent that delegated to you runs it before the PR merges.
@@ -74,6 +88,14 @@ In an unattended run (cloud agent, scheduled task, a thread started from an
 issue) nobody can answer a question mid-run. When `clarify` or `plan` need
 the user, they post on the issue and the run stops; the user's reply starts
 the next run.
+
+## Work in progress
+
+Keep at most ~3 agent threads running per project at once, counting
+delegated children and T3 threads. A fourth waits until one hands back its
+PR. Parallel branches collide on ADR numbers, migrations and shared files,
+and each open PR is one more thing the owner reviews. This is a soft cap:
+go over it when the owner asks.
 
 ## Which repos
 

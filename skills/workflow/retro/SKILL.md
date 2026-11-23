@@ -16,6 +16,12 @@ AGENTS.md.
 - Merged PRs since the last retro in every active project repo
   (`proj` `projects_list`, or the repos the user names). Read the
   "Factory notes" section of each body and the review threads.
+- **Review findings that led to a fix**: review-bot and owner comments
+  followed by a commit on the same PR that addressed them. Each is a
+  mistake the agent made and a reviewer caught.
+- **Churn**: files changed again within two weeks of a merge
+  (`git log --since` per repo). A quick re-edit usually means the first
+  change was wrong or incomplete.
 - Any session the user names: its transcript or T3 thread.
 - Earlier retros (closed issues or commits titled "retro") so you don't redo
   a fix.
@@ -40,7 +46,9 @@ removes it, in this order of preference:
    Prefer moving lines *out* of AGENTS.md into skills or checks.
 6. **Tool economy**: a tool call that cost far more than it needed to.
 
-One-off notes with no repeat and no cheap fix: drop them.
+A review finding or churn cause seen in two or more PRs becomes a rule: a
+`verify` check or lint rule first, an AGENTS.md line only when no check
+can catch it. One-off notes with no repeat and no cheap fix: drop them.
 
 ## 3. Fix
 
