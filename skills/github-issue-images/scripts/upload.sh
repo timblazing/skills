@@ -30,7 +30,8 @@ shift $((OPTIND - 1))
 # od reads 3 bytes and exits; `tr </dev/urandom | head` dies of SIGPIPE under pipefail.
 [[ -n "$dir" ]] || dir="$(date +%F)-$(od -An -N3 -tx1 /dev/urandom | tr -d ' \n')"
 
-parent=$(gh api "repos/$repo/git/ref/$REF" -q .object.sha 2>/dev/null || true)
+# On a 404 (first upload) gh still prints the error JSON to stdout, so keep the output only on success.
+parent=$(gh api "repos/$repo/git/ref/$REF" -q .object.sha 2>/dev/null) || parent=""
 
 for f in "$@"; do
   [[ -f "$f" ]] || { echo "not a file: $f" >&2; exit 1; }
@@ -61,7 +62,7 @@ for f in "$@"; do
   parent="$sha"
 
   width=""
-  if command -v sips >/dev/null; then width=$(sips -g pixelWidth "$f" 2>/dev/null | awk '/pixelWidth/{print $2}'); fi
+  if command -v sips >/dev/null; then width=$(sips -g pixelWidth "$f" 2>/dev/null | awk '/pixelWidth/{print $2}'); width="${width%%.*}"; fi  # SVGs report e.g. 710.000
   [[ -n "$width" && "$width" -gt 800 ]] && width=800
   alt="${caption:-$name}"
   echo "<img ${width:+width=\"$width\" }alt=\"$alt\" src=\"https://github.com/$repo/blob/$sha/$path?raw=true\" />"
